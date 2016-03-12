@@ -7,7 +7,6 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     $urlRouterProvider.otherwise("/patients/dashboard");
 
     $ocLazyLoadProvider.config({
-        // Set to true if you want to see what and when is dynamically loaded
         debug: false
     });
 
@@ -15,38 +14,43 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         .state('patients', {
             abstract: true,
             url: "/patients",
-            templateUrl: "views/common/content.html"
+            templateUrl: "views/common/content.html",
+            data: {pageTitle: 'Pacienti'}
         })
         .state('patients.dashboard', {
             url: '/dashboard',
             templateUrl: "views/dashboard.html"
         })
+        .state('patients.detail', {
+            url: '/detail',
+            templateUrl: "views/detail.html"
+        })
+        .state('lockscreen', {
+            url: '/lockscreen',
+            templateUrl: "views/lockscreen.html"
+        })
         .state('charts', {
             abstract: true,
             url: "/charts",
-            templateUrl: "views/common/content.html",
+            templateUrl: "views/common/content.html"
         })
         .state('charts.flot_chart', {
             url: "/flot_chart",
-            templateUrl: "views/graph_flot.html",
-            data: {pageTitle: 'Flot chart'},
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    return $ocLazyLoad.load([
-                        {
-                            serie: true,
-                            name: 'angular-flot',
-                            files: ['js/plugins/flot/jquery.flot.js', 'js/plugins/flot/jquery.flot.time.js', 'js/plugins/flot/jquery.flot.tooltip.min.js', 'js/plugins/flot/jquery.flot.spline.js', 'js/plugins/flot/jquery.flot.resize.js', 'js/plugins/flot/jquery.flot.pie.js', 'js/plugins/flot/curvedLines.js', 'js/plugins/flot/angular-flot.js',]
-                        }
-                    ]);
-                }
-            }
+            templateUrl: "views/chart.html",
         });
-
 }
+
+var chartsApiConfig = {
+    version: '1.1',
+    optionalSettings: {
+        packages: ['corechart', 'line', 'bar'],
+        language: 'cs'
+    }
+};
+
 angular
     .module('auxology')
-    .config(config)
+    .config(config).value('googleChartApiConfig', chartsApiConfig)
     .run(function ($rootScope, $state) {
         $rootScope.$state = $state;
     });

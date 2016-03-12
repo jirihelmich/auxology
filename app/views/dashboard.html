@@ -46,10 +46,10 @@
                                             <tbody>
                                             <tr>
                                                 <td class="client-avatar"><img alt="image" src="img/a2.jpg"></td>
-                                                <td><a ng-click="client = 1" class="client-link">Antonín Vomáčka</a>
+                                                <td><a ui-sref="patients.detail" class="client-link">Antonín Vomáčka</a>
                                                 </td>
                                                 <td> Praha</td>
-                                                <td class="contact-type"></td>
+                                                <td>151010/2283</td>
                                                 <td> 28. GT</td>
                                                 <td class="client-status"><span
                                                         class="label label-primary">OK</span></td>
@@ -57,10 +57,10 @@
                                             <tr>
                                                 <td class="client-avatar"><a href=""><img alt="image" src="img/a1.jpg"></a>
                                                 </td>
-                                                <td><a ng-click="client = 1" class="client-link">Karel Novák</a>
+                                                <td><a ui-sref="patients.detail" class="client-link">Karel Novák</a>
                                                 </td>
                                                 <td> Brno</td>
-                                                <td class="contact-type"></td>
+                                                <td>141112/1222</td>
                                                 <td> 29. GT</td>
                                                 <td class="client-status"><span
                                                         class="label label-danger">Nízká váha</span></td>
@@ -68,10 +68,12 @@
                                             <tr>
                                                 <td class="client-avatar"><a href=""></a>
                                                 </td>
-                                                <td><a href="" class="btn btn-default"><i class="fa fa-plus"></i> Nový pacient</a>git s</td>
+                                                <td><a href="" class="btn btn-default"><i class="fa fa-plus"></i> Nový
+                                                    pacient</a>git s
+                                                </td>
                                                 <td></td>
                                                 <td class="contact-type"></td>
-                                                <td> </td>
+                                                <td></td>
                                                 <td class="client-status"></td>
                                             </tr>
 
@@ -110,12 +112,12 @@
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                                         tempor incididunt ut labore et dolore magna aliqua.
                                     </p>
-                                    <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                                    <a ui-sref="patients.examination.new" class="btn btn-primary btn-sm btn-block"><i
                                             class="fa fa-plus"></i> Nové vyšetření
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-sm btn-block"><i
+                                    </a>
+                                    <a ui-sref="patients.detail" class="btn btn-default btn-sm btn-block"><i
                                             class="fa fa-user"></i> Detail pacienta
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                             <div class="client-detail">
