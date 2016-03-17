@@ -25,20 +25,22 @@
 
 <!-- ControllerAs syntax -->
 <!-- Main controller with serveral data used in Inspinia theme on diferent view -->
-<body ng-controller="MainCtrl as main" class="{{$state.current.data.specialClass}}" landing-scrollspy id="page-top">
+<body ng-controller="MainController as main" class="{{$state.current.data.specialClass}}" landing-scrollspy id="page-top">
 
 <!-- Main view  -->
 <div ui-view></div>
 
 <script>
     window.$ = window.jQuery = require('./js/jquery/jquery-2.1.1.min.js');
-    window.lf = window.loveFields = require('../node_modules/lovefield/dist/lovefield.js');
+    window.lf = window.loveField = require('../node_modules/lovefield/dist/lovefield.js');
+    window.bcrypt = require('../node_modules/bcrypt-nodejs/bCrypt.js');
 </script>
 
-<script src="js/database/schema/01.js"></script>
+<script src="js/database/schema.js"></script>
 
 <!-- jQuery and Bootstrap -->
 <script src="js/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="js/plugins/sparkline/jquery.sparkline.min.js"></script>
 <script src="js/bootstrap/bootstrap.min.js"></script>
 
 <!-- MetsiMenu -->
@@ -62,13 +64,28 @@
 <script src="js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
 <script src="js/plugins/angular-idle/angular-idle.js"></script>
 <script src="../node_modules/angular-google-chart/ng-google-chart.min.js"></script>
+<script src="../node_modules/ng-lovefield/dest/ng-lovefield.min.js"></script>
 
 <!-- Anglar App Script -->
+<script src="js/functions.js"></script>
 <script src="js/app.js"></script>
 <script src="js/config.js"></script>
 <script src="js/directives.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/controllers/mainController.js"></script>
+<script src="js/controllers/registerController.js"></script>
+<script src="js/controllers/loginController.js"></script>
+<script src="js/controllers/detailController.js"></script>
+<script src="js/controllers/dashboardController.js"></script>
+<script src="js/controllers/newPatientController.js"></script>
+<script src="js/controllers/chartController.js"></script>
 <script src="js/controllers.js"></script>
-<script src="js/services.js"></script>
+<script src="js/services/services.js"></script>
+<script src="js/services/asyncUtils.js"></script>
+<script src="js/services/passwordService.js"></script>
+<script src="js/services/sessionModel.js"></script>
+<script src="js/services/patientModel.js"></script>
+<script src="js/services/userModel.js"></script>
 
 </body>
 </html>

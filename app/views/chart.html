@@ -1,3 +1,85 @@
-<div ng-controller="ChartController">
-    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-9">
+        <h2>Grafy</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="#/">Auxologie</a>
+            </li>
+            <li class="active">
+                <strong>Grafy</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div ng-controller="ChartController">
+
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1"> Chlapci pod 1500 g</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2">Dívky pod 1500 g</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-3">Chlapci nad 1500 g</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-4">Dívky nad 1500 g</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Graf váhy
+                                    <small></small>
+                                </h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Graf délky
+                                    <small></small>
+                                </h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Graf váhy ku délce
+                                    <small></small>
+                                </h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Graf obvodu hlavy
+                                    <small></small>
+                                </h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div>
+                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
 </div>

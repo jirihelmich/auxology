@@ -5,6 +5,7 @@
         'ui.bootstrap',                 // Ui Bootstrap
         'ngIdle',                       // Idle timer
         'ngSanitize',                   // ngSanitize
-        'googlechart'
+        'googlechart',
+        'kutomer.ng-lovefield'
     ])
 })();

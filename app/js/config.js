@@ -1,4 +1,4 @@
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdleProvider, KeepaliveProvider) {
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdleProvider) {
 
     // Configure Idle settings
     IdleProvider.idle(5); // in seconds
@@ -17,17 +17,45 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             templateUrl: "views/common/content.html",
             data: {pageTitle: 'Pacienti'}
         })
+        .state('examinations', {
+            abstract: true,
+            url: "/examinations",
+            templateUrl: "views/common/content.html",
+            data: {pageTitle: 'Vyšetření'}
+        })
+        .state('examinations.new', {
+            url: '/new',
+            templateUrl: "views/examination/new.html"
+        })
         .state('patients.dashboard', {
             url: '/dashboard',
-            templateUrl: "views/dashboard.html"
+            templateUrl: "views/patient/dashboard.html"
         })
         .state('patients.detail', {
-            url: '/detail',
-            templateUrl: "views/detail.html"
+            url: '/detail/:id',
+            templateUrl: "views/patient/detail.html"
+        })
+        .state('patients.new', {
+            url: '/new',
+            templateUrl: "views/patient/new.html"
+        })
+        .state('patients.list', {
+            url: '/list',
+            templateUrl: "views/patient/contacts.html"
         })
         .state('lockscreen', {
             url: '/lockscreen',
             templateUrl: "views/lockscreen.html"
+        })
+        .state('login', {
+            url: '/login',
+            templateUrl: "views/user/login.html",
+            data: {pageTitle: 'Přihlášení', specialClass: 'gray-bg'}
+        })
+        .state('register', {
+            url: '/register',
+            templateUrl: "views/user/register.html",
+            data: {pageTitle: 'Registrace', specialClass: 'gray-bg'}
         })
         .state('charts', {
             abstract: true,
@@ -50,7 +78,27 @@ var chartsApiConfig = {
 
 angular
     .module('auxology')
-    .config(config).value('googleChartApiConfig', chartsApiConfig)
-    .run(function ($rootScope, $state) {
+    .config(config)
+    .config(['lovefieldProvider', dbSchema])
+    .value('googleChartApiConfig', chartsApiConfig)
+    .run(function ($rootScope, $state, $location, $timeout, sessionModel, $q) {
         $rootScope.$state = $state;
+
+        $q.resolve =  $q.when;
+
+        return;
+
+        $rootScope.$on('$stateChangeStart', function (e, toState) {
+            var isLogin = toState.name === 'login';
+            var isRegister = toState.name === 'register';
+            if (isLogin || isRegister) {
+                return;
+            }
+
+            var user = sessionModel.getCurrentUser();
+            if (!user) {
+                e.preventDefault();
+                $state.go('login');
+            }
+        });
     });
