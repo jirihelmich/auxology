@@ -3,12 +3,14 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
     function getPerson(mixedData) {
         return {
             id: mixedData.id,
-            birthNumber: mixedData.birthNumber.replace('/', ''),
+            birthNumber: (mixedData.birthNumber || "").replace('/', '').replace(' ', ''),
             gender: mixedData.gender,
             titlePrefix: mixedData.titlePrefix,
             titlePostfix: mixedData.titlePostfix,
             firstName: mixedData.firstname,
             lastName: mixedData.lastname,
+            firstNameSearchable: url_slug(mixedData.firstname || "").toLowerCase(),
+            lastNameSearchable: url_slug(mixedData.lastname || "").toLowerCase(),
             email: mixedData.email,
             phone: mixedData.phone,
             weight: mixedData.weight,
@@ -120,6 +122,39 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
                             patientTable.id.eq(id)
                         )
                     )
+                    .exec();
+            });
+        },
+        search: function (token, count) {
+
+            return lovefield.getDB().then(function (db) {
+                var patientTable = db.getSchema().table('Patient');
+                var personTable = db.getSchema().table('Person');
+
+                var tokens = token.split(" ");
+                var ors = tokens.map(function (token) {
+                    token = url_slug(token);
+                    return lf.op.or(
+                        personTable.lastNameSearchable.match(token),
+                        personTable.firstNameSearchable.match(token),
+                        personTable.birthNumber.match(token)
+                    );
+                });
+
+                var orsForAnd = lf.op.or.apply(this, ors);
+
+                var doctorId = sessionModel.getCurrentUser().id;
+                return db.select()
+                    .from(patientTable)
+                    .innerJoin(personTable, personTable.id.eq(patientTable.personId))
+                    .where(
+                        lf.op.and(
+                            patientTable.doctorId.eq(doctorId),
+                            orsForAnd
+                        )
+                    )
+                    .orderBy(patientTable.id, lf.Order.DESC)
+                    .limit(count)
                     .exec();
             });
         },

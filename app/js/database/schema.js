@@ -1,6 +1,6 @@
 function dbSchema(lovefieldProvider) {
 
-    var schemaBuilder = lovefieldProvider.create('auxology', 12);
+    var schemaBuilder = lovefieldProvider.create('auxology', 14);
 
     schemaBuilder.createTable('Address')
         .addColumn('id', lf.Type.INTEGER)
@@ -16,6 +16,8 @@ function dbSchema(lovefieldProvider) {
         .addColumn('titlePrefix', lf.Type.STRING)
         .addColumn('firstName', lf.Type.STRING)
         .addColumn('lastName', lf.Type.STRING)
+        .addColumn('firstNameSearchable', lf.Type.STRING)
+        .addColumn('lastNameSearchable', lf.Type.STRING)
         .addColumn('titlePostfix', lf.Type.STRING)
         .addColumn('email', lf.Type.STRING)
         .addColumn('phone', lf.Type.STRING)
@@ -24,7 +26,23 @@ function dbSchema(lovefieldProvider) {
         .addColumn('weight', lf.Type.INTEGER)
         .addColumn('length', lf.Type.INTEGER)
         .addColumn('headCircumference', lf.Type.INTEGER)
-        .addNullable(['gender', 'titlePrefix', 'firstName', 'lastName', 'titlePostfix', 'email', 'phone', 'birthNumber', 'weight', 'length', 'headCircumference'])
+        .addNullable([
+            'gender',
+            'titlePrefix',
+            'firstName',
+            'lastName',
+            'firstName',
+            'lastNameSearchable',
+            'firstNameSearchable',
+            'lastName',
+            'titlePostfix',
+            'email',
+            'phone',
+            'birthNumber',
+            'weight',
+            'length',
+            'headCircumference'
+        ])
         .addPrimaryKey(['id'], true)
         .addForeignKey('fkAddressId', {
             local: 'addressId',
@@ -54,7 +72,7 @@ function dbSchema(lovefieldProvider) {
         .addColumn('doctorId', lf.Type.INTEGER)
         .addColumn('motherId', lf.Type.INTEGER)
         .addColumn('fatherId', lf.Type.INTEGER)
-        .addColumn('isActive', lf.Type.BOOLEAN) 
+        .addColumn('isActive', lf.Type.BOOLEAN)
         .addColumn('birthWeek', lf.Type.INTEGER)
         .addColumn('birthWeight', lf.Type.INTEGER)
         .addColumn('birthLength', lf.Type.INTEGER)
@@ -87,6 +105,7 @@ function dbSchema(lovefieldProvider) {
     schemaBuilder.createTable('Examination')
         .addColumn('id', lf.Type.INTEGER)
         .addColumn('patientId', lf.Type.INTEGER)
+        .addColumn('doctorId', lf.Type.INTEGER)
         .addColumn('dateTime', lf.Type.DATE_TIME)
         .addColumn('weight', lf.Type.INTEGER)
         .addColumn('height', lf.Type.INTEGER)
@@ -96,6 +115,11 @@ function dbSchema(lovefieldProvider) {
         .addForeignKey('fkPatientId', {
             local: 'patientId',
             ref: 'Patient.id',
+            action: lf.ConstraintAction.CASCADE
+        })
+        .addForeignKey('fkDoctorId', {
+            local: 'doctorId',
+            ref: 'User.id',
             action: lf.ConstraintAction.CASCADE
         });
 

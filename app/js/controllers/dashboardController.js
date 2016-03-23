@@ -1,17 +1,21 @@
 function DashboardController($scope, patientModel) {
 
-    $scope.search = function () {
-        console.log($scope.searchToken);
+    var patientsLoaded = function (patients) {
+        safeApply($scope, function () {
+            $scope.patients = patients;
+        });
+    };
+
+    var error = function (error) {
+        console.log(error);
     };
 
     $scope.patients = [];
 
-    patientModel.recent(10).then(function (patients) {
-        $scope.$apply(function () {
-            $scope.patients = patients;
-        });
-    }, function (error) {
-        console.log(error);
-    });
+    $scope.search = function () {
+        patientModel.search($scope.searchToken, 10).then(patientsLoaded, error)
+    };
+
+    patientModel.recent(10).then(patientsLoaded, error);
 
 }

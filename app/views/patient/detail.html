@@ -63,8 +63,8 @@
                             <div class="user-button">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href="#/examinations/new" class="btn btn-primary btn-sm btn-block"><i
-                                                class="fa fa-plus"></i> Nové vyšetření
+                                        <a ui-sref="examinations.new({patientId: patient.Patient.id})" class="btn btn-primary btn-sm btn-block">
+                                            <i class="fa fa-plus"></i> Nové vyšetření
                                         </a>
                                     </div>
                                     <div class="col-md-6">
