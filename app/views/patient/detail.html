@@ -23,41 +23,61 @@
             <div class="col-md-4">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Detail pacienta</h5>
+                        <h5><i class="fa" ng-class="{'fa-male': patient.Person.gender == 'male', 'fa-female': patient.Person.gender == 'female'}"></i> {{patient.Person.firstName}}
+                            {{patient.Person.lastName}}</h5>
                     </div>
                     <div>
                         <div class="ibox-content no-padding border-left-right">
                             <img alt="image" class="img-responsive" src="img/profile_big.jpg">
                         </div>
                         <div class="ibox-content profile-content">
-                            <h4><strong><i class="fa" ng-class="{'fa-male': patient.Person.gender == 'male', 'fa-female': patient.Person.gender == 'female'}"></i> {{patient.Person.firstName}} {{patient.Person.lastName}}</strong></h4>
+                            <h5>Věk</h5>
 
-                            <p><i class="fa fa-calendar"></i> {{patient.Patient.birthWeek}}. GT narození</p>
-                            <p><i class="fa fa-calendar"></i> 38. GT + 2 dny - aktuální věk</p>
-                            <p><i class="fa fa-calendar"></i> -2 týdny - korigovaný věk</p>
-                            <p><i class="fa fa-calendar"></i> 10 týdnů + 2 dny - kalendářní věk</p>
-                            <h5>
+                            <table class="table">
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Datum narození</th>
+                                    <td>{{ patient.Person.birthNumber | birthDate }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Gestační týden narození</th>
+                                    <td>{{ patient.Patient.birthWeek }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Aktuální gestační věk</th>
+                                    <td>{{ patient | gestationalAge }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Korigovaný věk ({{patient | expectedBirth}})</th>
+                                    <td>{{ patient | correctedAge }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Kalendářní věk</th>
+                                    <td>{{ patient | age }}</td>
+                                </tr>
+                            </table>
+
+                            <h5 ng-show="patient.Person.description">
                                 Poznámky
                             </h5>
-
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-                                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                exercitat.
+                                {{patient.Person.description}}
                             </p>
 
-                            <div class="row m-t-lg">
+                            <div class="row m-t-lg" ng-show="examinations && examinations.length">
                                 <div class="col-md-4">
-                                    <div sparkline spark-data="inlineData" spark-options="inlineOptions"></div>
-                                    <h5><strong>42 cm</strong> hlava</h5>
+                                    {{inlineDataCircumference | json}}
+                                    <div sparkline spark-data="inlineData.circumference" spark-options="inlineOptions"></div>
+                                    <h5><strong>{{examinations[0].headCircumference}} mm</strong> hlava</h5>
                                 </div>
                                 <div class="col-md-4">
-                                    <div sparkline spark-data="inlineData2" spark-options="inlineOptions"></div>
-                                    <h5><strong>3560 g</strong> hmotnost</h5>
+                                    {{inlineDataWeight | json}}
+                                    <div sparkline spark-data="inlineData.weight" spark-options="inlineOptions"></div>
+                                    <h5><strong>{{examinations[0].weight}} g</strong> hmotnost</h5>
                                 </div>
                                 <div class="col-md-4">
-                                    <div sparkline spark-data="inlineData" spark-options="inlineOptions"></div>
-                                    <h5><strong>65 cm</strong> délka</h5>
+                                    {{inlineDataLength | json}}
+                                    <div sparkline spark-data="inlineData.length" spark-options="inlineOptions"></div>
+                                    <h5><strong>{{examinations[0].length}} mm</strong> délka</h5>
                                 </div>
                             </div>
                             <div class="user-button">
@@ -83,33 +103,33 @@
                     <div class="ibox-title">
                         <h5>
                             Karta pacienta
-                            <small>0 vyšetření</small>
+                            <small>{{examinations.length}} vyšetření</small>
                         </h5>
                     </div>
-                    <div class="ibox-content">
+                    <div class="ibox-content" ng-show="examinations && examinations.length">
 
                         <div>
-                            <div class="feed-activity-list">
+                            <div class="feed-activity-list" ng-repeat="e in examinations" ng-show="$index == 0 || showAll">
 
                                 <div class="feed-element">
                                     <a href="" class="pull-left">
                                         <img alt="image" class="img-circle" src="img/a1.jpg">
                                     </a>
 
-                                    <div class="media-body ">
+                                    <div class="media-body">
                                         <small class="pull-right text-navy">1 měsíc</small>
-                                        <strong>Běžné vyšetření.</strong>
-                                        <p>Lorem ipsum dolor sit amet.</p>
-                                        <small class="text-muted">21.12.2015 12:37</small>
+                                        <strong>Vyšetření ve věku {{patient | correctedAge : e.dateTime}}</strong>
+                                        <p>{{e.description}}</p>
+                                        <small class="text-muted">{{e.dateTime | formatDateTime}}</small>
                                         <div class="actions">
-                                            <!--<a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
-                                            <a class="btn btn-xs btn-danger"><i class="fa fa-heart"></i> Love</a>-->
+                                            <a class="btn btn-xs btn-white"><i class="fa fa-pencil"></i> Změnit </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary btn-block m"><i class="fa fa-arrow-down"></i> Zobrazit více
+                            <button class="btn btn-primary btn-block m" ng-show="examinations.length > 1 && !showAll" ng-click="showAll = true">
+                                <i class="fa fa-arrow-down"></i> Zobrazit více
                             </button>
 
                         </div>
@@ -125,27 +145,28 @@
 
                                 <span ng-show="patient.Patient.birthWeight < 1500">pod</span>
                                 <span ng-show="patient.Patient.birthWeight >= 1500">nad</span>
-                            1500 g ({{patient.Patient.birthWeight}} g)</small>
+                                1500 g ({{patient.Patient.birthWeight}} g)
+                            </small>
                         </h5>
                     </div>
                     <div class="ibox-content">
 
-                        <div class="row" ng-controller="ChartController">
+                        <div class="row">
                             <div class="col-md-6">
                                 <strong>hmotnost</strong>
-                                <div google-chart chart="chart2" style="{{chart2.cssStyle}}"/>
+                                <div google-chart chart="weightChart" style="{{weightChart.cssStyle}}"/>
                             </div>
                             <div class="col-md-6">
                                 <strong>Délka</strong>
-                                <div google-chart chart="chart2" style="{{chart2.cssStyle}}"/>
+                                <div google-chart chart="lengthChart" style="{{lengthChart.cssStyle}}"/>
                             </div>
                             <div class="col-md-6">
                                 <strong>hmotnost ku délce</strong>
-                                <div google-chart chart="chart2" style="{{chart2.cssStyle}}"/>
+                                <div google-chart chart="weightForLengthChart" style="{{weightForLengthChart.cssStyle}}"/>
                             </div>
                             <div class="col-md-6">
                                 <strong>Obvod hlavy</strong>
-                                <div google-chart chart="chart2" style="{{chart2.cssStyle}}"/>
+                                <div google-chart chart="headCircumferenceChart" style="{{headCircumferenceChart.cssStyle}}"/>
                             </div>
                         </div>
 
@@ -154,7 +175,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" ng-show="examinations && examinations.length">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
@@ -169,25 +190,43 @@
                                 <th>#</th>
                                 <th>Datum</th>
                                 <th>Korigovaný věk</th>
-                                <th>Hmotnost [g]</th>
-                                <th>Délka [mm]</th>
-                                <th>Hmotnost k délce [g / mm]</th>
-                                <th>Obvod hlavy [mm]</th>
-                                <th></th>
-                                <th>Percentil</th>
-                                <th>SD skóre</th>
+                                <th>Hmotnost
+                                    <nobr>[g]</nobr>
+                                </th>
+                                <th>%</th>
+                                <th>SD</th>
+                                <th>Délka
+                                    <nobr>[mm]</nobr>
+                                </th>
+                                <th>%</th>
+                                <th>SD</th>
+                                <th>Hmotnost k délce
+                                    <nobr>[g / mm]</nobr>
+                                </th>
+                                <th>%</th>
+                                <th>SD</th>
+                                <th>Obvod hlavy
+                                    <nobr>[mm]</nobr>
+                                </th>
+                                <th>%</th>
+                                <th>SD</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>15. 3. 2016</td>
-                                <td>2 měsíce 2 týdny</td>
-                                <td>2500</td>
-                                <td>530</td>
-                                <td>4.71</td>
-                                <td>402</td>
-                                <td></td>
+                            <tr ng-repeat="e in examinations">
+                                <td>{{examinations.length - $index}}</td>
+                                <td>{{e.dateTime | formatDateTime}}</td>
+                                <td>{{patient | correctedAge : e.dateTime}}</td>
+                                <td>{{e.weight}}</td>
+                                <td>98.</td>
+                                <td>+2</td>
+                                <td>{{e.length}}</td>
+                                <td>98.</td>
+                                <td>+2</td>
+                                <td>{{(e.weight / e.length) | number : 2}}</td>
+                                <td>98.</td>
+                                <td>+2</td>
+                                <td>{{e.headCircumference}}</td>
                                 <td>98.</td>
                                 <td>+2</td>
                             </tr>

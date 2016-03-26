@@ -262,14 +262,16 @@ function sparkline() {
             sparkOptions: '=',
         },
         link: function (scope, element, attrs) {
-            scope.$watch(scope.sparkData, function () {
+            scope.$watch('sparkData', function () {
                 render();
             });
-            scope.$watch(scope.sparkOptions, function () {
+            scope.$watch('sparkOptions', function () {
                 render();
             });
             var render = function () {
-                $(element).sparkline(scope.sparkData, scope.sparkOptions);
+                if (scope.sparkData.length) {
+                    $(element).sparkline(scope.sparkData, scope.sparkOptions);
+                }
             };
         }
     }
@@ -604,4 +606,4 @@ angular
     .directive('slimScroll', slimScroll)
     .directive('truncate', truncate)
     .directive('touchSpin', touchSpin)
-    .directive('markdownEditor', markdownEditor)
+    .directive('markdownEditor', markdownEditor);

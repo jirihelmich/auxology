@@ -1,15 +1,17 @@
 function NewExaminationController($scope, $state, $stateParams, patientModel, examinationModel) {
 
-    console.log($stateParams.patientId);
-
     patientModel.getById($stateParams.patientId).then(function(p){
         $scope.patient = p[0];
     });
 
-    $scope.createExamination = function () {
-        examinationModel.createOrUpdate($stateParams.patientId).then(function (result) {
+    $scope.examination = {
+        dateTime: moment(new Date()).format("D. M. Y H:m")
+    };
 
-            $state.go('patients.detail', {id: result[0].id});
+    $scope.createExamination = function () {
+        examinationModel.createOrUpdate($stateParams.patientId, $scope.examination).then(function (result) {
+
+            $state.go('patients.detail', {id: $stateParams.patientId});
 
         }, function (error) {
 

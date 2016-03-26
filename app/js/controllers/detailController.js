@@ -1,8 +1,11 @@
-function DetailController($scope, $stateParams, patientModel) {
+function DetailController($scope, $stateParams, patientModel, examinationModel, chartService) {
 
-    $scope.inlineData = [34, 36, 39, 41, 44, 44, 52];
-    $scope.inlineData2 = [2570, 2679, 2733, 2846, 2983, 3000, 3000, 3010];
-    $scope.inlineData3 = [32, 54, 55, 56, 65, 70, 80, 80];
+    $scope.inlineData = {
+        weight: [],
+        length: [],
+        circumference: []
+    };
+
     $scope.inlineOptions = {
         type: 'line',
         lineColor: '#17997f',
@@ -12,10 +15,51 @@ function DetailController($scope, $stateParams, patientModel) {
     };
 
     patientModel.getById($stateParams.id).then(function (p) {
-        console.log(p);
-        $scope.$apply(function () {
-            $scope.patient = p[0];
+        $scope.patient = p[0];
+
+        examinationModel.getAllByPatient($stateParams.id).then(function (examinations) {
+            $scope.examinations = examinations;
+            var inlineDataWeight = [];
+            var inlineDataLength = [];
+            var inlineDataCircumference = [];
+
+            examinations.forEach(function (e) {
+                inlineDataWeight.unshift(e.weight);
+                inlineDataLength.unshift(e.length);
+                inlineDataCircumference.unshift(e.headCircumference);
+            });
+
+            $scope.inlineData.length = inlineDataLength;
+            $scope.inlineData.weight = inlineDataWeight;
+            $scope.inlineData.circumference = inlineDataCircumference;
+
+            $scope.weightChart = chartService.getChart(
+                $scope.patient.Person.gender,
+                'under',
+                'weight'
+            );
+
+            $scope.lengthChart = chartService.getChart(
+                $scope.patient.Person.gender,
+                'under',
+                'length'
+            );
+
+            $scope.weightForLengthChart = chartService.getChart(
+                $scope.patient.Person.gender,
+                'under',
+                'weightForLength'
+            );
+
+            $scope.headCircumferenceChart = chartService.getChart(
+                $scope.patient.Person.gender,
+                'under',
+                'headCircumference'
+            );
+        }, function (e) {
+            console.log(e);
         });
     });
+
 
 }

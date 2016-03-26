@@ -33,24 +33,24 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Datum vyšetření</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" placeholder="17. 3. 2016" ng-bind="examination.dateTime"/>
+                                    <input type="text" class="form-control" placeholder="17. 3. 2016 12:54" ng-model="examination.dateTime"/>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Poznámky</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" ng-bind="patient.description"></textarea>
+                                    <textarea class="form-control" ng-model="examination.description"></textarea>
                                 </div>
                             </div>
 
                             <div class="hr-line-dashed"></div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">hmotnost</label>
+                                <label class="col-sm-2 control-label">Hmotnost</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="2345" ng-bind="patient.birthWeight"/>
+                                        <input type="number" class="form-control" placeholder="2345" ng-model="examination.weight"/>
                                         <span class="input-group-addon">&nbsp;&nbsp;g</span>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                                 <label class="col-sm-2 control-label">Délka</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-bind="patient.birthLength"/>
+                                        <input type="number" class="form-control" placeholder="520" ng-model="examination.length"/>
                                         <span class="input-group-addon">mm</span>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
                                 <label class="col-sm-2 control-label">Obvod hlavy</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="375" ng-bind="patient.birthHeadCircumference"/>
+                                        <input type="number" class="form-control" placeholder="375" ng-model="examination.headCircumference"/>
                                         <span class="input-group-addon">mm</span>
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-10 col-sm-offset-2 text-right">
-                                    <button class="btn btn-white" type="submit">Storno</button>
+                                    <button class="btn btn-white" type="reset">Storno</button>
                                     <button class="btn btn-primary" type="submit">Přidat měření</button>
                                 </div>
                             </div>

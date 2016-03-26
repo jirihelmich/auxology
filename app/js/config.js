@@ -24,7 +24,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             data: {pageTitle: 'Vyšetření'}
         })
         .state('examinations.new', {
-            url: '/new',
+            url: '/new/:patientId',
             templateUrl: "views/examination/new.html"
         })
         .state('patients.dashboard', {

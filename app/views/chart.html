@@ -21,7 +21,7 @@
                 <li class=""><a data-toggle="tab" href="#tab-3">Chlapci nad 1500 g</a></li>
                 <li class=""><a data-toggle="tab" href="#tab-4">Dívky nad 1500 g</a></li>
             </ul>
-            <div class="tab-content">
+            <div class="tab-content" ng-init="gender = 'female'; ">
                 <div id="tab-1" class="tab-pane active">
                     <div class="panel-body">
                         <div class="ibox float-e-margins">
@@ -32,7 +32,7 @@
                             </div>
                             <div class="ibox-content">
                                 <div>
-                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                    <div google-chart chart="weightChart" style="{{weightChart.cssStyle}}"/>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                             </div>
                             <div class="ibox-content">
                                 <div>
-                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                    <div google-chart chart="lengthChart" style="{{lengthChart.cssStyle}}"/>
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                             </div>
                             <div class="ibox-content">
                                 <div>
-                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                    <div google-chart chart="weightForLengthChart" style="{{weightForLengthChart.cssStyle}}"/>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="ibox-content">
                                 <div>
-                                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                                    <div google-chart chart="headCircumferenceChart" style="{{headCircumferenceChart.cssStyle}}"/>
                                 </div>
                             </div>
                         </div>

@@ -34,9 +34,22 @@
     window.$ = window.jQuery = require('./js/jquery/jquery-2.1.1.min.js');
     window.lf = window.loveField = require('../node_modules/lovefield/dist/lovefield.js');
     window.bcrypt = require('../node_modules/bcrypt-nodejs/bCrypt.js');
+    window.statisticalData = {
+        male: {
+            under: {},
+            above: {}
+        },
+        female: {
+            under: {},
+            above: {}
+        }
+    };
 </script>
 
 <script src="js/database/schema.js"></script>
+
+<script src="../node_modules/moment/moment.js"></script>
+<script src="../node_modules/moment/locale/cs.js"></script>
 
 <!-- jQuery and Bootstrap -->
 <script src="js/plugins/jquery-ui/jquery-ui.js"></script>
@@ -81,13 +94,18 @@
 <script src="js/controllers/newExaminationController.js"></script>
 <script src="js/controllers/chartController.js"></script>
 <script src="js/controllers.js"></script>
-<script src="js/services/services.js"></script>
 <script src="js/services/asyncUtils.js"></script>
+<script src="js/services/chartService.js"></script>
 <script src="js/services/passwordService.js"></script>
 <script src="js/services/sessionModel.js"></script>
 <script src="js/services/patientModel.js"></script>
 <script src="js/services/examinationModel.js"></script>
 <script src="js/services/userModel.js"></script>
+
+<script src="js/services/statisticalData/female/under/circumference.js"></script>
+<script src="js/services/statisticalData/female/under/weight.js"></script>
+<script src="js/services/statisticalData/female/under/weightForLength.js"></script>
+<script src="js/services/statisticalData/female/under/length.js"></script>
 
 </body>
 </html>
