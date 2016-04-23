@@ -56,6 +56,8 @@ function PatientController($scope, $state, patientModel) {
         });
     }
 
+    $scope.hasDecimal = hasDecimal;
+
     $scope.createPatient = function () {
         patientModel.createOrUpdate($scope.patient, $scope.mother, $scope.father).then(function (result) {
 

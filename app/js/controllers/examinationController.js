@@ -27,14 +27,10 @@ function ExaminationController($scope, $state, $stateParams, patientModel, exami
     $scope.hasDecimal = hasDecimal;
 
     $scope.createExamination = function () {
-        examinationModel.createOrUpdate($stateParams.patientId, $scope.examination).then(function (result) {
-
+        examinationModel.createOrUpdate($stateParams.patientId, $scope.examination).then(function () {
             $state.go('patients.detail', {id: $stateParams.patientId});
-
         }, function (error) {
-
             console.log(error);
-
         });
     };
 

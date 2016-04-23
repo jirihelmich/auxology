@@ -7,5 +7,6 @@ angular
     .controller('DashboardController', DashboardController)
     .controller('PatientController', PatientController)
     .controller('ExaminationController', ExaminationController)
+    .controller('LogoutController', LogoutController)
     .controller('RegisterController', RegisterController);
 

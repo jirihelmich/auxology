@@ -108,8 +108,9 @@
                                 <label class="col-sm-2 control-label">Porodní délka</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="patient.birthLength"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="520" ng-model="patient.birthLength"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(patient.birthLength)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(patient.birthLength)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -118,8 +119,9 @@
                                 <label class="col-sm-2 control-label">Obvod hlavy při porodu</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="375" ng-model="patient.birthHeadCircumference"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="375" ng-model="patient.birthHeadCircumference"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(patient.birthHeadCircumference)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(patient.birthHeadCircumference)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -150,8 +152,9 @@
                                 <label class="col-sm-2 control-label">Výška</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="mother.length"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="520" ng-model="mother.length"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(mother.length)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(mother.length)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -170,8 +173,9 @@
                                 <label class="col-sm-2 control-label">Obvod hlavy</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="375" ng-model="mother.headCircumference"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="375" ng-model="mother.headCircumference"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(mother.headCircumference)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(mother.headCircumference)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -277,8 +281,9 @@
                                 <label class="col-sm-2 control-label">Výška</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="father.length"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="520" ng-model="father.length"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(father.length)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(father.length)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -297,8 +302,9 @@
                                 <label class="col-sm-2 control-label">Obvod hlavy</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="375" ng-model="father.headCircumference"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="375" ng-model="father.headCircumference"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(father.headCircumference)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(father.headCircumference)">mm</span>
                                     </div>
                                 </div>
                             </div>

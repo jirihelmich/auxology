@@ -1,13 +1,13 @@
-angular.module('auxology').service('sessionModel', ['asyncUtils', 'passwordService', 'userModel', function (asyncUtils, passwordService, userModel) {
-
-    var currentUser = {id: 2};
+angular.module('auxology').service('sessionModel',
+    ['asyncUtils', 'passwordService', 'userModel', 'localStorageService',
+        function (asyncUtils, passwordService, userModel, localStorageService) {
 
     return {
         getCurrentUser: function () {
-            return currentUser;
+            return localStorageService.get('currentUser');
         },
         signOut: function () {
-            currentUser = null;
+            localStorageService.set('currentUser', null);
         },
         signIn: function (username, password) {
             return asyncUtils.deferredAction(function (resolve, reject) {
@@ -25,7 +25,7 @@ angular.module('auxology').service('sessionModel', ['asyncUtils', 'passwordServi
                             return;
                         }
 
-                        currentUser = user;
+                        localStorageService.set('currentUser', user);
                         resolve(user);
                     }, reject);
 

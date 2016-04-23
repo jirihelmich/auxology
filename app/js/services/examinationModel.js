@@ -1,16 +1,5 @@
 angular.module('auxology').service('examinationModel', ['$q', 'sessionModel', 'lovefield', function ($q, sessionModel, lovefield) {
 
-    function numerize(string) {
-        var number = string;
-        if (!number) {
-            return NaN;
-        }
-        if (number.replace) {
-            number = number.replace(/[^\d]*(\d+)[,\.]?(\d)?.*/g, "$1$2");
-        }
-        return parseInt(number);
-    }
-
     return {
         createOrUpdate: function (patientId, examination) {
             return lovefield.getDB().then(function (db) {

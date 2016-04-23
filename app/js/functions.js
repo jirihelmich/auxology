@@ -232,3 +232,14 @@ function url_slug(s, opt) {
 
     return opt.lowercase ? s.toLowerCase() : s;
 }
+
+function numerize(string) {
+    var number = string;
+    if (!number) {
+        return NaN;
+    }
+    if (number.replace) {
+        number = number.replace(/[^\d]*(\d+)[,\.]?(\d)?.*/g, "$1$2");
+    }
+    return parseInt(number);
+}

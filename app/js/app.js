@@ -6,6 +6,7 @@
         'ngIdle',                       // Idle timer
         'ngSanitize',                   // ngSanitize
         'googlechart',
-        'kutomer.ng-lovefield'
+        'kutomer.ng-lovefield',
+        'LocalStorageModule'
     ])
 })();

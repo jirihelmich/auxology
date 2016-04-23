@@ -15,8 +15,8 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
             phone: mixedData.phone,
             description: mixedData.description,
             weight: mixedData.weight,
-            length: mixedData.length,
-            headCircumference: mixedData.headCircumference
+            length: numerize(mixedData.length),
+            headCircumference: numerize(mixedData.headCircumference)
         };
     }
 
@@ -27,8 +27,8 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
             birthWeek: mixedData.birthWeek,
             expectedBirthDate: moment(mixedData.expectedBirthDate, "D. M. Y").toDate(),
             birthWeight: mixedData.birthWeight,
-            birthLength: mixedData.birthLength,
-            birthHeadCircumference: mixedData.birthHeadCircumference
+            birthLength: numerize(mixedData.birthLength),
+            birthHeadCircumference: numerize(mixedData.birthHeadCircumference)
         };
     }
 

@@ -55,6 +55,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             url: '/lockscreen',
             templateUrl: "views/lockscreen.html"
         })
+        .state('logout', {
+            url: '/logout',
+            templateUrl: "views/logout.html"
+        })
         .state('login', {
             url: '/login',
             templateUrl: "views/user/login.html",
@@ -88,11 +92,15 @@ angular
     .module('auxology')
     .config(config)
     .config(['lovefieldProvider', dbSchema])
+    .config(function (localStorageServiceProvider) {
+        localStorageServiceProvider.setPrefix('auxology');
+        localStorageServiceProvider.setStorageType('sessionStorage');
+    })
     .value('googleChartApiConfig', chartsApiConfig)
     .run(function ($rootScope, $state, $location, $timeout, sessionModel, $q) {
         $rootScope.$state = $state;
 
-        $q.resolve =  $q.when;
+        $q.resolve = $q.when;
 
         $rootScope.$on('$stateChangeStart', function (e, toState) {
             var isLogin = toState.name === 'login';
