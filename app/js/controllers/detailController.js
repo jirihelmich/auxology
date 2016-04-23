@@ -23,6 +23,10 @@ function DetailController($scope, $stateParams, patientModel, $state, examinatio
         window.scrollTo(document.documentElement.scrollLeft, $scope.scroll);
     };
 
+    $scope.print = function () {
+        window.print();
+    };
+
     $scope.zoom = function (chart) {
         var copy = $.extend(true, {}, chart);
         $scope.scroll = $(window).scrollTop();

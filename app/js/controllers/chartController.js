@@ -42,6 +42,10 @@ function ChartController($scope, chartService) {
         );
     }
 
+    $scope.print = function () {
+        window.print();
+    };
+
     createCharts();
 
 }
