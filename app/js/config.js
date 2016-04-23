@@ -27,6 +27,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             url: '/new/:patientId',
             templateUrl: "views/examination/new.html"
         })
+        .state('examinations.edit', {
+            url: '/edit/:patientId/:examinationId',
+            templateUrl: "views/examination/new.html"
+        })
         .state('patients.dashboard', {
             url: '/dashboard',
             templateUrl: "views/patient/dashboard.html"
@@ -37,6 +41,10 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         })
         .state('patients.new', {
             url: '/new',
+            templateUrl: "views/patient/new.html"
+        })
+        .state('patients.edit', {
+            url: '/edit/:id',
             templateUrl: "views/patient/new.html"
         })
         .state('patients.list', {
@@ -86,8 +94,6 @@ angular
 
         $q.resolve =  $q.when;
 
-        return;
-
         $rootScope.$on('$stateChangeStart', function (e, toState) {
             var isLogin = toState.name === 'login';
             var isRegister = toState.name === 'register';
@@ -96,6 +102,7 @@ angular
             }
 
             var user = sessionModel.getCurrentUser();
+
             if (!user) {
                 e.preventDefault();
                 $state.go('login');

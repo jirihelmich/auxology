@@ -5,7 +5,7 @@ angular
     .controller('LoginController', LoginController)
     .controller('DetailController', DetailController)
     .controller('DashboardController', DashboardController)
-    .controller('NewPatientController', NewPatientController)
-    .controller('NewExaminationController', NewExaminationController)
+    .controller('PatientController', PatientController)
+    .controller('ExaminationController', ExaminationController)
     .controller('RegisterController', RegisterController);
 

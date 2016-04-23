@@ -1,12 +1,18 @@
 function formatDate() {
     return function (date) {
+        if (!date) {
+            return '';
+        }
         return moment(date).format("D. M. Y");
     };
 }
 
 function formatDateTime() {
     return function (dateTime) {
-        return moment(dateTime).format("D. M. Y H:m");
+        if (!dateTime) {
+            return '';
+        }
+        return moment(dateTime).format("D. M. Y H:mm");
     }
 }
 
@@ -39,13 +45,23 @@ function getAgeDiff(patient, asOf) {
     };
 }
 
+function printDiff(diff) {
+    if (Math.abs(diff.months) > 2) {
+        return diff.months + ' ' + monthsSuffix(diff.months);
+    }
+
+    var dayDiff = diff.days % 7;
+    var week = diff.weeks;
+    return (week) + ' ' + weeksSuffix(week) + ' ' + dayDiff + ' ' + daysSuffix(dayDiff);
+}
+
 function gestationalAge() {
     return function (patient) {
         if (!patient) {
             return;
         }
-        var diff = getAgeDiff(patient);
-        return (diff.weeks + patient.Patient.birthWeek) + ' t. + ' + diff.days % 7 + ' d.';
+        var diff = getAgeDiff(patient, moment(new Date()).add(patient.Patient.birthWeek, 'weeks'));
+        return printDiff(diff);
     };
 }
 
@@ -60,19 +76,75 @@ function expectedBirth() {
     };
 }
 
+function correctedWeek(patient, asOf) {
+    if (!patient) {
+        return;
+    }
+    var diff = getAgeDiff(patient, asOf);
+    return ((diff.weeks + patient.Patient.birthWeek) - 40);
+}
+
 function correctedAge() {
     return function (patient, asOf) {
         if (!patient) {
             return;
         }
-        var diff = getAgeDiff(patient, asOf);
-
-        var weekDiff = ((diff.weeks + patient.Patient.birthWeek) - 40);
-        var dayDiff = weekDiff > 0 ? diff.days % 7 : (7 - (diff.days % 7));
-        var plusMinus = weekDiff > 0 ? '+' : '-';
-
-        return weekDiff + ' t. ' + plusMinus + dayDiff + ' d.';
+        var diff = getAgeDiff(patient, moment(asOf).add(patient.Patient.birthWeek - 40, 'weeks'));
+        return printDiff(diff);
     };
+}
+
+function weeksSuffix(weeksCount) {
+    switch (Math.abs(weeksCount)) {
+        case 0:
+            return 'týdnů';
+        case 1:
+            return 'týden';
+        case 2:
+            return 'týdny';
+        case 3:
+            return 'týdny';
+        case 4:
+            return 'týdny';
+        default:
+            return 'týdnů';
+    }
+}
+
+function daysSuffix(daysCount) {
+    switch (Math.abs(daysCount)) {
+        case 0:
+            return 'dnů';
+        case 1:
+            return 'den';
+        case 2:
+            return 'dny';
+        case 3:
+            return 'dny';
+        case 4:
+            return 'dny';
+        case 5:
+            return 'dnů';
+        case 6:
+            return 'dnů';
+    }
+}
+
+function monthsSuffix(monthsCount) {
+    switch (Math.abs(monthsCount)) {
+        case 0:
+            return 'měsíců';
+        case 1:
+            return 'měsíc';
+        case 2:
+            return 'měsíce';
+        case 3:
+            return 'měsíce';
+        case 4:
+            return 'měsíce';
+        default:
+            return 'měsíců';
+    }
 }
 
 function age() {
@@ -81,10 +153,19 @@ function age() {
             return;
         }
         var diff = getAgeDiff(patient);
-        if (diff.months > 3) {
-            return diff.months + 'm.';
+        return printDiff(diff);
+    };
+}
+
+function birthNumber() {
+    return function (number) {
+        if (!number) {
+            return '';
         }
-        return (diff.weeks) + ' t. + ' + diff.days % 7 + ' d.';
+        if (number.length < 6) {
+            return number;
+        }
+        return number.substring(0, 6) + "/" + number.substring(6);
     };
 }
 
@@ -94,6 +175,7 @@ angular
     .filter('expectedBirth', expectedBirth)
     .filter('formatDateTime', formatDateTime)
     .filter('birthDate', birthDate)
+    .filter('birthNumber', birthNumber)
     .filter('correctedAge', correctedAge)
     .filter('age', age)
     .filter('gestationalAge', gestationalAge);

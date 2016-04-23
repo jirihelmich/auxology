@@ -43,6 +43,71 @@ function dateFromBirthNumber(birthNumber) {
     return null;
 }
 
+function zScore(patientData, lms) {
+    var l = lms[0];
+    var m = lms[1];
+    var s = lms[2];
+
+    return (Math.pow((patientData / m), l) - 1) / (l * s);
+}
+
+function cumnormdist($x) {
+    $b1 = 0.319381530;
+    $b2 = -0.356563782;
+    $b3 = 1.781477937;
+    $b4 = -1.821255978;
+    $b5 = 1.330274429;
+    $p = 0.2316419;
+    $c = 0.39894228;
+
+    if ($x >= 0.0) {
+        $t = 1.0 / ( 1.0 + $p * $x );
+        return (1.0 - $c * Math.exp(-$x * $x / 2.0) * $t *
+        ( $t * ( $t * ( $t * ( $t * $b5 + $b4 ) + $b3 ) + $b2 ) + $b1 ));
+    }
+    else {
+        $t = 1.0 / ( 1.0 - $p * $x );
+        return ( $c * Math.exp(-$x * $x / 2.0) * $t *
+        ( $t * ( $t * ( $t * ( $t * $b5 + $b4 ) + $b3 ) + $b2 ) + $b1 ));
+    }
+}
+
+function percentile(patientData, lms) {
+    return 100 * cumnormdist(zScore(patientData, lms));
+}
+
+function shadeColor(color, percent) {
+    if(!color){ return null };
+    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+}
+
+function genderColor(patient) {
+    if (!patient) {
+        return;
+    }
+    return patient.Person.gender == 'female' ? '#ed5565' : '#1c84c6';
+}
+
+function hasDecimal(string) {
+    if (!string) {
+        return false;
+    }
+    string = ("" + string);
+    return string.indexOf(",") > -1 || string.indexOf(".") > -1;
+}
+
+function mmToCm(mm) {
+    if (mm) {
+        var cm = mm / 10;
+        if (!hasDecimal(cm)) {
+            return cm + ".0";
+        }
+        return "" + cm;
+    }
+    return "";
+}
+
 safeApply = function ($scope, fn) {
     var phase = $scope.$root.$$phase;
     if (phase == '$apply' || phase == '$digest') {

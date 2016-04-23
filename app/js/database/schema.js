@@ -1,13 +1,14 @@
 function dbSchema(lovefieldProvider) {
 
-    var schemaBuilder = lovefieldProvider.create('auxology', 16);
+    var schemaBuilder = lovefieldProvider.create('auxology', 18);
 
     schemaBuilder.createTable('Address')
         .addColumn('id', lf.Type.INTEGER)
         .addColumn('street', lf.Type.STRING)
         .addColumn('city', lf.Type.STRING)
         .addColumn('country', lf.Type.STRING)
-        .addNullable(['street', 'city', 'country'])
+        .addColumn('zipcode', lf.Type.STRING)
+        .addNullable(['street', 'city', 'country', 'zipcode'])
         .addPrimaryKey(['id'], true);
 
     schemaBuilder.createTable('Person')
@@ -76,6 +77,7 @@ function dbSchema(lovefieldProvider) {
         .addColumn('fatherId', lf.Type.INTEGER)
         .addColumn('isActive', lf.Type.BOOLEAN)
         .addColumn('birthWeek', lf.Type.INTEGER)
+        .addColumn('expectedBirthDate', lf.Type.DATE_TIME)
         .addColumn('birthWeight', lf.Type.INTEGER)
         .addColumn('birthLength', lf.Type.INTEGER)
         .addColumn('birthHeadCircumference', lf.Type.INTEGER)

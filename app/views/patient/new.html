@@ -1,16 +1,18 @@
-<div ng-controller="NewPatientController">
+<div ng-controller="PatientController">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-9">
-            <h2>Nový pacient</h2>
+            <h2 ng-hide="currentPatient">Nový pacient</h2>
+            <h2 ng-show="currentPatient">Editace pacienta</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a ui-sref="patients.dashboard">Auxologie</a>
+                    <a ui-sref="patients.dashboard">Auxologie nedonošenců</a>
                 </li>
                 <li>
                     Pacienti
                 </li>
                 <li class="active">
-                    <strong>Nový pacient</strong>
+                    <strong ng-hide="currentPatient">Nový pacient</strong>
+                    <strong ng-show="currentPatient">{{currentPatient.Person.firstName}} {{currentPatient.Person.lastName}}</strong>
                 </li>
             </ol>
         </div>
@@ -32,10 +34,19 @@
                                     <input type="text" class="form-control" placeholder="880426/1234" required="required" birth-number ng-model="patient.birthNumber"/>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="col-lg-2 control-label">Datum narození</label>
                                 <div class="col-lg-10"><p class="form-control-static">{{patient.birthNumber | birthDate}}</p></div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Plánované datum porodu</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="17. 3. 2016" ng-model="patient.expectedBirthDate"/>
+                                </div>
+                            </div>
+
 
                             <div class="hr-line-dashed"></div>
 
@@ -136,21 +147,21 @@
                             <div class="hr-line-dashed"></div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Hmotnost</label>
-                                <div class="col-sm-10">
-                                    <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="mother.weight"/>
-                                        <span class="input-group-addon">&nbsp;&nbsp;g</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label class="col-sm-2 control-label">Výška</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
                                         <input type="number" class="form-control" placeholder="520" ng-model="mother.length"/>
                                         <span class="input-group-addon">mm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Hmotnost</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group m-b">
+                                        <input type="number" class="form-control" placeholder="520" ng-model="mother.weight"/>
+                                        <span class="input-group-addon">&nbsp;&nbsp;g</span>
                                     </div>
                                 </div>
                             </div>
@@ -263,21 +274,21 @@
                             <div class="hr-line-dashed"></div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Hmotnost</label>
-                                <div class="col-sm-10">
-                                    <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="father.weight"/>
-                                        <span class="input-group-addon">&nbsp;&nbsp;g</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label class="col-sm-2 control-label">Výška</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
                                         <input type="number" class="form-control" placeholder="520" ng-model="father.length"/>
                                         <span class="input-group-addon">mm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Hmotnost</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group m-b">
+                                        <input type="number" class="form-control" placeholder="520" ng-model="father.weight"/>
+                                        <span class="input-group-addon">&nbsp;&nbsp;g</span>
                                     </div>
                                 </div>
                             </div>
@@ -371,14 +382,16 @@
 
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Vytvořit pacienta</h5>
+                            <h5 ng-hide="currentPatient">Vytvořit pacienta</h5>
+                            <h5 ng-show="currentPatient">Upravit detaily pacienta</h5>
                         </div>
                         <div class="ibox-content">
 
                             <div class="form-group">
                                 <div class="col-sm-10 col-sm-offset-2 text-right">
                                     <button class="btn btn-white" type="submit">Storno</button>
-                                    <button class="btn btn-primary" type="submit">Přidat pacienta</button>
+                                    <button class="btn btn-primary" type="submit" ng-hide="currentPatient">Přidat pacienta</button>
+                                    <button class="btn btn-primary" type="submit" ng-show="currentPatient">Upravit detaily pacienta</button>
                                 </div>
                             </div>
 

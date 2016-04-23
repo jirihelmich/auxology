@@ -1,8 +1,8 @@
 angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovefield', function ($q, sessionModel, lovefield) {
 
-    function getPerson(mixedData) {
+    function getPerson(mixedData, id) {
         return {
-            id: mixedData.id,
+            id: id,
             birthNumber: (mixedData.birthNumber || "").replace('/', '').replace(' ', ''),
             gender: mixedData.gender,
             titlePrefix: mixedData.titlePrefix,
@@ -13,6 +13,7 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
             lastNameSearchable: url_slug(mixedData.lastname || "").toLowerCase(),
             email: mixedData.email,
             phone: mixedData.phone,
+            description: mixedData.description,
             weight: mixedData.weight,
             length: mixedData.length,
             headCircumference: mixedData.headCircumference
@@ -21,8 +22,10 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
 
     function getPatient(mixedData) {
         return {
+            id: mixedData.id,
             isActive: mixedData.isActive === undefined || mixedData.isActive === null ? true : isActive,
             birthWeek: mixedData.birthWeek,
+            expectedBirthDate: moment(mixedData.expectedBirthDate, "D. M. Y").toDate(),
             birthWeight: mixedData.birthWeight,
             birthLength: mixedData.birthLength,
             birthHeadCircumference: mixedData.birthHeadCircumference
@@ -77,19 +80,19 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
             var parents = [
                 {
                     address: mother.address,
-                    person: getPerson(mother),
+                    person: getPerson(mother, patient.motherId),
                     mother: true
                 },
                 {
                     address: father.address,
-                    person: getPerson(father),
+                    person: getPerson(father, patient.fatherId),
                     father: true
                 }
             ];
 
             var kid = {
                 address: patient.address,
-                person: getPerson(patient),
+                person: getPerson(patient, patient.personId),
                 patient: getPatient(patient)
             };
 
@@ -110,12 +113,61 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
                 var patientTable = db.getSchema().table('Patient');
                 var personTable = db.getSchema().table('Person');
                 var examinationTable = db.getSchema().table('Examination');
+                var motherTable = db.getSchema().table('Person').as('Mother');
+                var motherAddressTable = db.getSchema().table('Address').as('MotherAddress');
+                var fatherTable = db.getSchema().table('Person').as('Father');
+                var fatherAddressTable = db.getSchema().table('Address').as('FatherAddress');
 
                 var doctorId = sessionModel.getCurrentUser().id;
                 return db.select()
                     .from(patientTable)
                     .innerJoin(personTable, personTable.id.eq(patientTable.personId))
                     .leftOuterJoin(examinationTable, examinationTable.patientId.eq(patientTable.id))
+                    .innerJoin(motherTable, motherTable.id.eq(patientTable.motherId))
+                    .innerJoin(fatherTable, fatherTable.id.eq(patientTable.fatherId))
+                    .innerJoin(motherAddressTable, motherAddressTable.id.eq(motherTable.addressId))
+                    .innerJoin(fatherAddressTable, fatherAddressTable.id.eq(fatherTable.addressId))
+                    .where(
+                        lf.op.and(
+                            patientTable.doctorId.eq(doctorId),
+                            patientTable.id.eq(id)
+                        )
+                    )
+                    .orderBy(examinationTable.dateTime, lf.Order.DESC)
+                    .limit(1)
+                    .exec();
+            });
+        },
+        deleteById: function (id) {
+            return lovefield.getDB().then(function (db) {
+                var patientTable = db.getSchema().table('Patient');
+                var doctorId = sessionModel.getCurrentUser().id;
+
+                return db.delete().from(patientTable).where(
+                    lf.op.and(
+                        patientTable.doctorId.eq(doctorId),
+                        patientTable.id.eq(id)
+                    )
+                ).exec();
+            });
+        },
+        getDetail: function (id) {
+            return lovefield.getDB().then(function (db) {
+                var patientTable = db.getSchema().table('Patient');
+                var personTable = db.getSchema().table('Person');
+                var motherTable = db.getSchema().table('Person').as('Mother');
+                var motherAddressTable = db.getSchema().table('Address').as('MotherAddress');
+                var fatherTable = db.getSchema().table('Person').as('Father');
+                var fatherAddressTable = db.getSchema().table('Address').as('FatherAddress');
+
+                var doctorId = sessionModel.getCurrentUser().id;
+                return db.select()
+                    .from(patientTable)
+                    .innerJoin(personTable, personTable.id.eq(patientTable.personId))
+                    .innerJoin(motherTable, motherTable.id.eq(patientTable.motherId))
+                    .innerJoin(fatherTable, fatherTable.id.eq(patientTable.fatherId))
+                    .innerJoin(motherAddressTable, motherAddressTable.id.eq(motherTable.addressId))
+                    .innerJoin(fatherAddressTable, fatherAddressTable.id.eq(fatherTable.addressId))
                     .where(
                         lf.op.and(
                             patientTable.doctorId.eq(doctorId),

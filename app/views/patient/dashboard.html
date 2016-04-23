@@ -4,7 +4,7 @@
             <h2>Pacienti</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a ui-sref="patients.dashboard">Auxologie</a>
+                    <a ui-sref="patients.dashboard">Auxologie nedonošenců</a>
                 </li>
                 <li class="active">
                     <strong>Pacienti</strong>
@@ -34,7 +34,7 @@
                         </p>
                         <form ng-submit="search()">
                             <div class="input-group">
-                                <input type="text" placeholder="Vyhledat pacienta" class="input form-control" ng-model="searchToken" required="required"/>
+                                <input type="text" placeholder="Vyhledat pacienta" class="input form-control" ng-model="searchToken" />
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn btn-primary"><i class="fa fa-search"></i>
                                         Hledat
@@ -62,26 +62,30 @@
                                                     <th>Rodné číslo</th>
                                                     <th>Datum narození</th>
                                                     <th>GT narození</th>
-                                                    <th>porodní váha</th>
+                                                    <th>Porodní hmotnost</th>
+                                                    <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="p in patients">
-                                                    <td class="client-avatar"><img alt="image" src="img/a2.jpg"></td>
-                                                    <td class="text-center">
+                                                    <td class="client-avatar"><img alt="image" src="img/profile_big.jpg"></td>
+                                                    <td style="color: {{genderColor(p)}}">
                                                         <a ui-sref="patients.detail({id: p.Patient.id})" class="client-link">{{p.Person.firstName}} {{p.Person.lastName}}</a>
                                                     </td>
-                                                    <td>
+                                                    <td style="color: {{genderColor(p)}}">
                                                         <i class="fa" ng-class="{'fa-male': p.Person.gender == 'male', 'fa-female': p.Person.gender == 'female'}"></i>
                                                     </td>
-                                                    <td>{{p.Person.birthNumber}}</td>
+                                                    <td>
+                                                        <a ui-sref="patients.detail({id: p.Patient.id})" class="client-link">{{p.Person.birthNumber | birthNumber}}</a>
+                                                    </td>
                                                     <td>{{p.Person.birthNumber | birthDate}}</td>
                                                     <td>{{p.Patient.birthWeek}}. GT</td>
                                                     <td>{{p.Patient.birthWeight}} g</td>
+                                                    <td><a ng-click="info(p)"><i class="fa fa-info"></i></a></td>
                                                 </tr>
                                                 <tr ng-hide="patients.length">
                                                     <td></td>
-                                                    <td colspan="4">Žádní pacienti.</td>
+                                                    <td colspan="5">Žádní pacienti.</td>
                                                 </tr>
                                                 </tbody>
                                             </table>

@@ -1,31 +1,34 @@
-<div ng-controller="NewExaminationController">
+<div ng-controller="ExaminationController">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-9">
-            <h2>Nové vyšetření</h2>
+            <h2 ng-hide="currentExamination">Nové vyšetření</h2>
+            <h2 ng-show="currentExamination">Editovat vyšetření</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a href="index.html">Auxologie</a>
+                    <a href="index.html">Auxologie nedonošenců</a>
                 </li>
                 <li>
                     Pacienti
                 </li>
                 <li>
-                    Karel Vomáčka
+                    <a ui-sref="patients.detail({id: patient.Patient.id})">{{patient.Person.firstName}} {{patient.Person.lastName}}</a>
                 </li>
                 <li class="active">
-                    <strong>Nové vyšetření</strong>
+                    <strong ng-hide="currentExamination">Nové vyšetření</strong>
+                    <strong ng-show="currentExamination">Editovat vyšetření</strong>
                 </li>
             </ol>
         </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
-
         <div class="row">
             <div class="col-lg-12">
                 <form method="get" class="form-horizontal" ng-submit="createExamination()">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Nové vyšetření
+                            <h5>
+                                <span ng-hide="currentExamination">Nové vyšetření</span>
+                                <span ng-show="currentExamination">Editovat vyšetření</span>
                                 <small>Zadejte, prosím, naměřené údaje.</small>
                             </h5>
                         </div>
@@ -46,6 +49,41 @@
 
                             <div class="hr-line-dashed"></div>
 
+                            <div class="row" ng-show="patient.Examination && !currentExamination">
+                                <div class="col-lg-12">
+                                    <div class="widget navy-bg p-lg">
+                                        <div class="m-b-md">
+                                            <h4 class="font-bold no-margins">
+                                                Hodnoty naměřené při posledním vyšetření
+                                            </h4>
+                                        </div>
+                                        <table class="table">
+                                            <tr>
+                                                <th>Tělesná délka</th>
+                                                <td>{{patient.Examination.length/10}} cm</td>
+                                                <th>Tělesná hmotnost</th>
+                                                <td>{{patient.Examination.weight}} g</td>
+                                                <th>Obvod hlavy</th>
+                                                <td>{{patient.Examination.headCircumference/10}} cm</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Délka</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group m-b">
+                                        <input type="text" class="form-control" placeholder="520" ng-model="examination.length"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(examination.length)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(examination.length)">mm</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Hmotnost</label>
                                 <div class="col-sm-10">
@@ -57,21 +95,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Délka</label>
-                                <div class="col-sm-10">
-                                    <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="520" ng-model="examination.length"/>
-                                        <span class="input-group-addon">mm</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label class="col-sm-2 control-label">Obvod hlavy</label>
                                 <div class="col-sm-10">
                                     <div class="input-group m-b">
-                                        <input type="number" class="form-control" placeholder="375" ng-model="examination.headCircumference"/>
-                                        <span class="input-group-addon">mm</span>
+                                        <input type="text" class="form-control" placeholder="375" ng-model="examination.headCircumference"/>
+                                        <span class="input-group-addon" ng-show="hasDecimal(examination.headCircumference)">cm</span>
+                                        <span class="input-group-addon" ng-hide="hasDecimal(examination.headCircumference)">mm</span>
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +108,8 @@
                             <div class="form-group">
                                 <div class="col-sm-10 col-sm-offset-2 text-right">
                                     <button class="btn btn-white" type="reset">Storno</button>
-                                    <button class="btn btn-primary" type="submit">Přidat měření</button>
+                                    <button class="btn btn-primary" type="submit" ng-hide="currentExamination">Přidat měření</button>
+                                    <button class="btn btn-primary" type="submit" ng-show="currentExamination">Editovat měření</button>
                                 </div>
                             </div>
 

@@ -1,10 +1,16 @@
+<style>
+    .border {
+        border-right: 1px solid lightgray;
+    }
+</style>
+
 <div ng-controller="DetailController">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10">
             <h2>Detail pacienta</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a href="index.html">Auxologie</a>
+                    <a href="index.html">Auxologie nedonošenců</a>
                 </li>
                 <li>
                     <a href="/patients">Pacienti</a>
@@ -15,7 +21,6 @@
             </ol>
         </div>
         <div class="col-lg-2">
-
         </div>
     </div>
     <div class="wrapper wrapper-content">
@@ -23,8 +28,13 @@
             <div class="col-md-4">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5><i class="fa" ng-class="{'fa-male': patient.Person.gender == 'male', 'fa-female': patient.Person.gender == 'female'}"></i> {{patient.Person.firstName}}
-                            {{patient.Person.lastName}}</h5>
+                        <h5>
+                            <span style="color: {{genderColor()}}">
+                                <i class="fa" ng-class="{'fa-male': patient.Person.gender == 'male', 'fa-female': patient.Person.gender == 'female'}"></i>
+                                {{patient.Person.firstName}} {{patient.Person.lastName}}
+                            </span>
+                            <small>({{ patient.Person.birthNumber | birthNumber }})</small>
+                        </h5>
                     </div>
                     <div>
                         <div class="ibox-content no-padding border-left-right">
@@ -39,15 +49,23 @@
                                     <td>{{ patient.Person.birthNumber | birthDate }}</td>
                                 </tr>
                                 <tr>
-                                    <th><i class="fa fa-calendar"></i> Gestační týden narození</th>
-                                    <td>{{ patient.Patient.birthWeek }}</td>
+                                    <th><i class="fa fa-calendar"></i> Kalkulovaný termín porodu</th>
+                                    <td>{{patient | expectedBirth}}</td>
                                 </tr>
                                 <tr>
-                                    <th><i class="fa fa-calendar"></i> Aktuální gestační věk</th>
+                                    <th><i class="fa fa-calendar"></i> Plánovaný termín porodu</th>
+                                    <td>{{patient.Patient.expectedBirthDate | formatDate}}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Gestační věk při narození</th>
+                                    <td>{{ patient.Patient.birthWeek }}. týden</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Gestační věk (dnes)</th>
                                     <td>{{ patient | gestationalAge }}</td>
                                 </tr>
                                 <tr>
-                                    <th><i class="fa fa-calendar"></i> Korigovaný věk ({{patient | expectedBirth}})</th>
+                                    <th><i class="fa fa-calendar"></i> Korigovaný věk</th>
                                     <td>{{ patient | correctedAge }}</td>
                                 </tr>
                                 <tr>
@@ -63,11 +81,11 @@
                                 {{patient.Person.description}}
                             </p>
 
-                            <div class="row m-t-lg" ng-show="examinations && examinations.length">
+                            <div class="row m-t-lg" ng-if="examinations && examinations.length">
                                 <div class="col-md-4">
-                                    {{inlineDataCircumference | json}}
-                                    <div sparkline spark-data="inlineData.circumference" spark-options="inlineOptions"></div>
-                                    <h5><strong>{{examinations[0].headCircumference}} mm</strong> hlava</h5>
+                                    {{inlineDataLength | json}}
+                                    <div sparkline spark-data="inlineData.length" spark-options="inlineOptions"></div>
+                                    <h5><strong>{{examinations[0].length/10}} cm</strong> délka</h5>
                                 </div>
                                 <div class="col-md-4">
                                     {{inlineDataWeight | json}}
@@ -75,9 +93,9 @@
                                     <h5><strong>{{examinations[0].weight}} g</strong> hmotnost</h5>
                                 </div>
                                 <div class="col-md-4">
-                                    {{inlineDataLength | json}}
-                                    <div sparkline spark-data="inlineData.length" spark-options="inlineOptions"></div>
-                                    <h5><strong>{{examinations[0].length}} mm</strong> délka</h5>
+                                    {{inlineDataCircumference | json}}
+                                    <div sparkline spark-data="inlineData.circumference" spark-options="inlineOptions"></div>
+                                    <h5><strong>{{examinations[0].headCircumference/10}} cm</strong> hlava</h5>
                                 </div>
                             </div>
                             <div class="user-button">
@@ -88,9 +106,15 @@
                                         </a>
                                     </div>
                                     <div class="col-md-6">
-                                        <button type="button" class="btn btn-default btn-sm btn-block"><i
+                                        <a ui-sref="patients.edit({id: patient.Patient.id})" class="btn btn-default btn-sm btn-block"><i class="fa fa-pencil"></i> Upravit detaily pacienta </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="button" class="btn btn-default btn-sm btn-block" ng-click="archive()"><i
                                                 class="fa fa-archive"></i> Archivovat
                                         </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a ng-click="delete()" class="btn btn-danger btn-sm btn-block"><i class="fa fa-remove"></i> Smazat pacienta </a>
                                     </div>
                                 </div>
                             </div>
@@ -109,75 +133,97 @@
                     <div class="ibox-content" ng-show="examinations && examinations.length">
 
                         <div>
-                            <div class="feed-activity-list" ng-repeat="e in examinations" ng-show="$index == 0 || showAll">
+                            <div class="feed-activity-list col-lg-6" ng-repeat="e in examinations" ng-show="$index < 4 || showAll" style="margin-bottom: 10px">
 
                                 <div class="feed-element">
                                     <a href="" class="pull-left">
-                                        <img alt="image" class="img-circle" src="img/a1.jpg">
+                                        <img alt="image" class="img-circle" src="img/profile_big.jpg">
                                     </a>
 
                                     <div class="media-body">
-                                        <small class="pull-right text-navy">1 měsíc</small>
-                                        <strong>Vyšetření ve věku {{patient | correctedAge : e.dateTime}}</strong>
-                                        <p>{{e.description}}</p>
-                                        <small class="text-muted">{{e.dateTime | formatDateTime}}</small>
-                                        <div class="actions">
-                                            <a class="btn btn-xs btn-white"><i class="fa fa-pencil"></i> Změnit </a>
+                                        <!--<small class="pull-right text-navy">1 měsíc</small>-->
+                                        <strong>Vyšetření {{e.dateTime | formatDateTime}}</strong>
+                                        <small class="text-muted">({{patient | correctedAge : e.dateTime}})</small>
+                                        <p>{{e.description || "Žádné poznámky."}}</p>
+                                        <table class="table table-condensed">
+                                            <tr>
+                                                <th>Tělěsná délka</th>
+                                                <td>{{e.length/10}} cm</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tělěsná hmotnost</th>
+                                                <td>{{e.weight}} g</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Obvod hlavy</th>
+                                                <td>{{e.headCircumference/10}} cm</td>
+                                            </tr>
+                                        </table>
+                                        <div class="actions pull-right">
+                                            <a ui-sref="examinations.edit({patientId: patient.Patient.id, examinationId: e.id})" class="btn btn-xs btn-white"><i class="fa fa-pencil"></i> Změnit </a>
+                                            <button ng-click="deleteExamination(e)" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i> Smazat </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary btn-block m" ng-show="examinations.length > 1 && !showAll" ng-click="showAll = true">
-                                <i class="fa fa-arrow-down"></i> Zobrazit více
-                            </button>
+                            <div style="width: 30%; margin: auto;">
+                                <button class="btn btn-primary btn-block m" ng-show="examinations.length > 2 && !showAll" ng-click="showAll = true">
+                                    <i class="fa fa-arrow-down"></i> Zobrazit více
+                                </button>
+
+                                <button class="btn btn-primary btn-block m" ng-show="examinations.length > 2 && showAll" ng-click="showAll = false">
+                                    <i class="fa fa-arrow-up"></i> Zobrazit méně
+                                </button>
+                            </div>
 
                         </div>
 
                     </div>
                 </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Grafy
-                            <small>Referenční skupina:
-                                <span ng-show="patient.Person.gender == 'male'">Chlapci</span>
-                                <span ng-show="patient.Person.gender == 'female'">Dívky</span>
-
-                                <span ng-show="patient.Patient.birthWeight < 1500">pod</span>
-                                <span ng-show="patient.Patient.birthWeight >= 1500">nad</span>
-                                1500 g ({{patient.Patient.birthWeight}} g)
+                            <small>
+                                <span> - {{genderName()}}</span>
+                                <span>s tělesnou hmotností při porodu</span>
+                                <span>{{weightCategoryName()}}</span>
+                                1500 g (porodní hmotnost pacienta: {{patient.Patient.birthWeight}} g)
                             </small>
                         </h5>
                     </div>
                     <div class="ibox-content">
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <strong>hmotnost</strong>
-                                <div google-chart chart="weightChart" style="{{weightChart.cssStyle}}"/>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Délka</strong>
+                            <div class="col-md-6" style="position: relative">
                                 <div google-chart chart="lengthChart" style="{{lengthChart.cssStyle}}"/>
+                                <i class="fa fa-search-plus" style="cursor: pointer; position: absolute; bottom: 0; right: 0;" ng-click="zoom(lengthChart)"></i>
                             </div>
-                            <div class="col-md-6">
-                                <strong>hmotnost ku délce</strong>
+                            <div class="col-md-6" style="position: relative">
+                                <div google-chart chart="weightChart" style="{{weightChart.cssStyle}}"/>
+                                <i class="fa fa-search-plus" style="cursor: pointer; position: absolute; bottom: 0; right: 0;" ng-click="zoom(weightChart)"></i>
+                            </div>
+                            <div class="col-md-6" style="position: relative">
                                 <div google-chart chart="weightForLengthChart" style="{{weightForLengthChart.cssStyle}}"/>
+                                <i class="fa fa-search-plus" style="cursor: pointer; position: absolute; bottom: 0; right: 0;" ng-click="zoom(weightForLengthChart)"></i>
                             </div>
-                            <div class="col-md-6">
-                                <strong>Obvod hlavy</strong>
+                            <div class="col-md-6" style="position: relative">
                                 <div google-chart chart="headCircumferenceChart" style="{{headCircumferenceChart.cssStyle}}"/>
+                                <i class="fa fa-search-plus" style="cursor: pointer; position: absolute; bottom: 0; right: 0;" ng-click="zoom(headCircumferenceChart)"></i>
                             </div>
                         </div>
 
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="row" ng-show="examinations && examinations.length">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins">
+                <div class="ibox float-e-margins" ng-show="examinations && examinations.length">
                     <div class="ibox-title">
                         <h5>Tabelovaná data
                             <small>Shrnutí všech vyšetření</small>
@@ -187,29 +233,26 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Datum</th>
-                                <th>Korigovaný věk</th>
-                                <th>Hmotnost
-                                    <nobr>[g]</nobr>
-                                </th>
-                                <th>%</th>
-                                <th>SD</th>
-                                <th>Délka
-                                    <nobr>[mm]</nobr>
-                                </th>
-                                <th>%</th>
-                                <th>SD</th>
-                                <th>Hmotnost k délce
-                                    <nobr>[g / mm]</nobr>
-                                </th>
-                                <th>%</th>
-                                <th>SD</th>
-                                <th>Obvod hlavy
-                                    <nobr>[mm]</nobr>
-                                </th>
-                                <th>%</th>
-                                <th>SD</th>
+                                <th rowspan="2">#</th>
+                                <th rowspan="2">Datum</th>
+                                <th rowspan="2">Korigovaný věk</th>
+                                <th colspan="3" class="border">Hmotnost</th>
+                                <th colspan="3" class="border">Délka</th>
+                                <th colspan="3" class="border">Obvod hlavy</th>
+                                <th colspan="3">Hmotnost k délce</th>
+                            </tr>
+                            <tr>
+                                <th>[g]</th>
+                                <th>P</th>
+                                <th class="border">SDS</th>
+                                <th>[cm]</th>
+                                <th>P</th>
+                                <th class="border">SDS</th>
+                                <th>[cm]</th>
+                                <th>P</th>
+                                <th class="border">SDS</th>
+                                <th>P</th>
+                                <th>SDS</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -218,23 +261,106 @@
                                 <td>{{e.dateTime | formatDateTime}}</td>
                                 <td>{{patient | correctedAge : e.dateTime}}</td>
                                 <td>{{e.weight}}</td>
-                                <td>98.</td>
-                                <td>+2</td>
-                                <td>{{e.length}}</td>
-                                <td>98.</td>
-                                <td>+2</td>
-                                <td>{{(e.weight / e.length) | number : 2}}</td>
-                                <td>98.</td>
-                                <td>+2</td>
-                                <td>{{e.headCircumference}}</td>
-                                <td>98.</td>
-                                <td>+2</td>
+                                <td>{{computePercentile(e.weight, 'weight', e.dateTime)}}</td>
+                                <td class="border">{{zScore(e.weight, 'weight', e.dateTime)}}</td>
+                                <td>{{e.length/10}}</td>
+                                <td>{{computePercentile(e.length, 'length', e.dateTime)}}</td>
+                                <td class="border">{{zScore(e.length, 'length', e.dateTime)}}</td>
+                                <td>{{e.headCircumference/10}}</td>
+                                <td>{{computePercentile(e.headCircumference, 'headCircumference', e.dateTime)}}</td>
+                                <td class="border">{{zScore(e.headCircumference, 'headCircumference', e.dateTime)}}</td>
+                                <td>{{computeWfLPercentile(e.weight, e.length)}}</td>
+                                <td>{{zScoreWfL(e.weight, e.length)}}</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-12">
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Informace o rodičích</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-6" ng-repeat="p in parents | orderBy: 'gender'">
+                                <h5 ng-if="p.Person.gender == 'female'">Matka</h5>
+                                <h5 ng-if="p.Person.gender == 'male'">Otec</h5>
+                                <table class="table">
+                                    <tr>
+                                        <th>Rodné číslo</th>
+                                        <td>{{p.Person.birthNumber | birthNumber}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Datum narození</th>
+                                        <td>{{p.Person.birthNumber | birthDate}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Příjmení</th>
+                                        <td>{{p.Person.lastName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jméno</th>
+                                        <td>{{p.Person.firstName}}</td>
+                                    </tr>
+                                    <tr><td colspan="2">&nbsp;</td></tr>
+                                    <tr>
+                                        <th>Hmotnost [kg]</th>
+                                        <td>{{p.Person.weight/1000 || ''}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Výška [cm]</th>
+                                        <td>{{p.Person.length/10 || ''}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Obvod hlavy [cm]</th>
+                                        <td>{{p.Person.headCircumference/10 || ''}}</td>
+                                    </tr>
+                                    <tr><td colspan="2">&nbsp;</td></tr>
+                                    <tr>
+                                        <th>Poznámky</th>
+                                        <td>{{p.Person.description}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Telefon</th>
+                                        <td>{{p.Person.phone}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>E-mail</th>
+                                        <td>{{p.Person.email}}</td>
+                                    </tr>
+                                    <tr><td colspan="2">&nbsp;</td></tr>
+                                    <tr>
+                                        <th>Ulice</th>
+                                        <td>{{p.Address.street}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Město</th>
+                                        <td>{{p.Address.city}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>PSČ</th>
+                                        <td>{{p.Address.zipcode}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Země</th>
+                                        <td>{{p.Address.country}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </div>
+
+    <div ng-if="featuredChart" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: white; z-index: 1000">
+        <div style="position: absolute; top: 10px; right: 10px; z-index: 2; cursor: pointer" ng-click="close()"><i class="fa fa-times" style="font-size: 30px"></i></div>
+        <div google-chart chart="featuredChart" style="{{featuredChart.cssStyle}}"/>
     </div>
 </div>

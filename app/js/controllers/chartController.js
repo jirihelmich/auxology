@@ -1,35 +1,47 @@
-function ChartController($scope, chartService){
+function ChartController($scope, chartService) {
 
-    $scope.gender = 'female';
-    $scope.weight = 'under';
+    $scope.gender = 'male';
+    $scope.weightCategory = 'under';
+    $scope.activeTab = 1;
 
+    $scope.chart = function (activeTab, weightCategory, gender) {
+        $scope.activeTab = activeTab;
+        $scope.weightCategory = weightCategory;
+        $scope.gender = gender;
+        createCharts();
+    };
 
-    $scope.weightChart = chartService.getChart(
-        $scope.gender,
-        $scope.weight,
-        'weight',
-        {height: 700}
-    );
+    function createCharts() {
 
-    $scope.lengthChart = chartService.getChart(
-        $scope.gender,
-        $scope.weight,
-        'length',
-        {height: 700}
-    );
+        $scope.weightChart = chartService.getChart(
+            $scope.gender,
+            $scope.weightCategory,
+            'weight',
+            {height: 700, legend: 'right'}
+        );
 
-    $scope.weightForLengthChart = chartService.getChart(
-        $scope.gender,
-        $scope.weight,
-        'weightForLength',
-        {height: 700}
-    );
+        $scope.lengthChart = chartService.getChart(
+            $scope.gender,
+            $scope.weightCategory,
+            'length',
+            {height: 700, legend: 'right'}
+        );
 
-    $scope.headCircumferenceChart = chartService.getChart(
-        $scope.gender,
-        $scope.weight,
-        'headCircumference',
-        {height: 700}
-    );
+        $scope.weightForLengthChart = chartService.getChart(
+            $scope.gender,
+            $scope.weightCategory,
+            'weightForLength',
+            {height: 700, legend: 'right'}
+        );
+
+        $scope.headCircumferenceChart = chartService.getChart(
+            $scope.gender,
+            $scope.weightCategory,
+            'headCircumference',
+            {height: 700, legend: 'right'}
+        );
+    }
+
+    createCharts();
 
 }

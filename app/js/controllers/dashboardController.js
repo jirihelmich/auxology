@@ -12,10 +12,20 @@ function DashboardController($scope, patientModel) {
 
     $scope.patients = [];
 
+    $scope.genderColor = genderColor;
+
     $scope.search = function () {
-        patientModel.search($scope.searchToken, 10).then(patientsLoaded, error)
+        if (!$scope.searchToken && $scope.searchToken.trim().length == 0) {
+            $scope.reset();
+        } else {
+            patientModel.search($scope.searchToken, 10).then(patientsLoaded, error)
+        }
     };
 
-    patientModel.recent(10).then(patientsLoaded, error);
+    $scope.reset = function () {
+        patientModel.recent(10).then(patientsLoaded, error);
+    };
+
+    $scope.reset();
 
 }
