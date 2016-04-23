@@ -1,4 +1,4 @@
-function DashboardController($scope, patientModel) {
+function DashboardController($scope, patientModel, examinationModel) {
 
     var patientsLoaded = function (patients) {
         safeApply($scope, function () {
@@ -11,6 +11,8 @@ function DashboardController($scope, patientModel) {
     };
 
     $scope.patients = [];
+    $scope.selectedPatient = null;
+    $scope.selectedPatientExaminations = [];
 
     $scope.genderColor = genderColor;
 
@@ -24,6 +26,15 @@ function DashboardController($scope, patientModel) {
 
     $scope.reset = function () {
         patientModel.recent(10).then(patientsLoaded, error);
+    };
+
+    $scope.info = function (p) {
+        var id = p.Patient.id;
+        examinationModel.getAllByPatient(id).then(function(e){
+            $scope.selectedPatientExaminations = e;
+        });
+
+        $scope.selectedPatient = p;
     };
 
     $scope.reset();

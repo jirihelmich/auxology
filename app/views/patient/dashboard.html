@@ -34,7 +34,7 @@
                         </p>
                         <form ng-submit="search()">
                             <div class="input-group">
-                                <input type="text" placeholder="Vyhledat pacienta" class="input form-control" ng-model="searchToken" />
+                                <input type="text" placeholder="Vyhledat pacienta" class="input form-control" ng-model="searchToken"/>
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn btn-primary"><i class="fa fa-search"></i>
                                         Hledat
@@ -81,7 +81,7 @@
                                                     <td>{{p.Person.birthNumber | birthDate}}</td>
                                                     <td>{{p.Patient.birthWeek}}. GT</td>
                                                     <td>{{p.Patient.birthWeight}} g</td>
-                                                    <td><a ng-click="info(p)"><i class="fa fa-info"></i></a></td>
+                                                    <td><a class="btn btn-default btn-xs" ng-click="info(p)"><i class="fa fa-info"></i></a></td>
                                                 </tr>
                                                 <tr ng-hide="patients.length">
                                                     <td></td>
@@ -107,7 +107,7 @@
                                 <div ng-show="selectedPatient">
                                     <div class="row m-b-lg">
                                         <div class="col-lg-4 text-center">
-                                            <h2>Antonín Vomáčka</h2>
+                                            <h2>{{selectedPatient.Person.firstName}} {{selectedPatient.Person.lastName}}</h2>
 
                                             <div class="m-b-sm">
                                                 <img alt="image" class="img-circle" src="img/a2.jpg"
@@ -116,17 +116,16 @@
                                         </div>
                                         <div class="col-lg-8">
                                             <strong>
-                                                Poznámka
+                                                Poznámky
                                             </strong>
 
                                             <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                                tempor incididunt ut labore et dolore magna aliqua.
+                                                {{selectedPatient.Person.description || "Žádné poznámky."}}
                                             </p>
-                                            <a ui-sref="examinations.new" class="btn btn-primary btn-sm btn-block"><i
+                                            <a ui-sref="examinations.new({patientId: selectedPatient.Patient.id})" class="btn btn-primary btn-sm btn-block"><i
                                                     class="fa fa-plus"></i> Nové vyšetření
                                             </a>
-                                            <a ui-sref="patients.detail" class="btn btn-default btn-sm btn-block"><i
+                                            <a ui-sref="patients.detail({id: selectedPatient.Patient.id})" class="btn btn-default btn-sm btn-block"><i
                                                     class="fa fa-user"></i> Detail pacienta
                                             </a>
                                         </div>
@@ -134,29 +133,25 @@
                                     <div class="client-detail">
                                         <div class="full-height-scroll" full-scroll>
 
-                                            <strong>Poslední návštěva</strong>
+                                            <div ng-show="selectedPatientExaminations.length">
+                                                <strong>Poslední návštěva:&nbsp</strong>
+                                                <p>{{selectedPatientExaminations[0].dateTime | formatDateTime}}</p>
 
-                                            <ul class="list-group clear-list">
-                                                <li class="list-group-item fist-item">
-                                                    <span class="pull-right"> 09:00 </span>
-                                                    19.1.2016
-                                                </li>
-                                            </ul>
-                                            <strong>Poznámky</strong>
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                                tempor incididunt ut labore et dolore magna aliqua.
-                                            </p>
+                                                <strong>Poznámky</strong>
+                                                <p>
+                                                    {{selectedPatientExaminations[0].description || "Žádné poznámky."}}
+                                                </p>
+                                            </div>
                                             <hr/>
                                             <strong>Časová osa</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
-                                                <div class="vertical-timeline-block">
+                                                <div class="vertical-timeline-block" ng-repeat="examination in selectedPatientExaminations">
                                                     <div class="vertical-timeline-icon gray-bg">
                                                         <i class="fa fa-tachometer"></i>
                                                     </div>
                                                     <div class="vertical-timeline-content">
-                                                        <p>Vstupní vyšetření</p>
-                                                        <span class="vertical-date small text-muted"> 20.12.2015 12:30 </span>
+                                                        <p>Vyšetření</p>
+                                                        <span class="vertical-date small text-muted">{{examination.dateTime | formatDateTime}}</span>
                                                     </div>
                                                 </div>
                                                 <div class="vertical-timeline-block">
@@ -164,9 +159,9 @@
                                                         <i class="fa fa-child"></i>
                                                     </div>
                                                     <div class="vertical-timeline-content">
-                                                        <p>Narozen
+                                                        <p>Narozen<span ng-show="selectedPatient.Person.gender == 'female'">a</span>
                                                         </p>
-                                                        <span class="vertical-date small text-muted"> 12.12.2015 4:20 </span>
+                                                        <span class="vertical-date small text-muted">{{selectedPatient.Person.birthNumber | birthDate}}</span>
                                                     </div>
                                                 </div>
                                             </div>
