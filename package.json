@@ -28,6 +28,7 @@
   "dependencies": {
     "angular-google-chart": "^0.1.0",
     "angular-local-storage": "^0.2.7",
+    "angularjs-toaster": "^2.0.0",
     "bcrypt-nodejs": "0.0.3",
     "electron-prebuilt": "^0.36.11",
     "lovefield": "^2.1.7",

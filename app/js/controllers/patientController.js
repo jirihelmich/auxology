@@ -1,4 +1,4 @@
-function PatientController($scope, $state, patientModel) {
+function PatientController($scope, $state, patientModel, toaster) {
 
     $scope.patient = {address: {}};
     $scope.father = {address: {}, gender: 'male'};
@@ -59,14 +59,17 @@ function PatientController($scope, $state, patientModel) {
     $scope.hasDecimal = hasDecimal;
 
     $scope.createPatient = function () {
+
+        if (!$scope.patient.birthNumber || !$scope.patient.birthWeight || !$scope.patient.gender || !$scope.patient.birthWeek) {
+            notify(toaster, 'Chyba', 'Nejsou zadány všechny povinné údaje. Maximální povolená porodní hmotnost je 2500 g. Maximální povolený gestační týden narození je 37.', 'error');
+            return;
+        }
+
         patientModel.createOrUpdate($scope.patient, $scope.mother, $scope.father).then(function (result) {
-
             $state.go('patients.detail', {id: result[0].id});
-
         }, function (error) {
-
+            notify(toaster, 'Chyba', 'Nečekaná chyba aplikace.', 'error');
             console.log(error);
-
         });
     };
 

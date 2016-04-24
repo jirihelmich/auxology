@@ -7,6 +7,7 @@
         'ngSanitize',                   // ngSanitize
         'googlechart',
         'kutomer.ng-lovefield',
-        'LocalStorageModule'
+        'LocalStorageModule',
+        'toaster'
     ])
 })();
