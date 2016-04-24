@@ -12,7 +12,12 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600, title: "Monitoring růstu nedonošených dětí"});
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        title: "Monitoring růstu nedonošených dětí",
+        icon: __dirname + '/img/favicon.ico'
+    });
     mainWindow.maximize();
 
     // and load the index.html of the app.
