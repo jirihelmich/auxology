@@ -8,5 +8,7 @@ angular
     .controller('PatientController', PatientController)
     .controller('ExaminationController', ExaminationController)
     .controller('LogoutController', LogoutController)
+    .controller('ProfileController', ProfileController)
+    .controller('DoctorController', DoctorController)
     .controller('RegisterController', RegisterController);
 

@@ -254,6 +254,6 @@ function notify(toaster, title, body, type) {
         title: title,
         body: body,
         showCloseButton: true,
-        timeout: 50000
+        timeout: 5000
     });
 }

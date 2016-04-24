@@ -74,6 +74,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             url: "/charts",
             templateUrl: "views/common/content.html"
         })
+        .state('doctor', {
+            abstract: true,
+            url: "/doctor",
+            templateUrl: "views/common/content.html",
+            data: {pageTitle: 'Lékař'}
+        })
+        .state('doctor.editProfile', {
+            url: "/profile",
+            templateUrl: "views/person/profile.html"
+        })
         .state('charts.flot_chart', {
             url: "/flot_chart",
             templateUrl: "views/chart.html",
