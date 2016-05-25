@@ -261,15 +261,15 @@
                                 <td>{{examinations.length - $index}}</td>
                                 <td>{{e.dateTime | formatDateTime}}</td>
                                 <td>{{patient | correctedAge : e.dateTime}}</td>
-                                <td>{{e.weight}}</td>
+                                <td><nobr>{{e.weight}}</nobr></td>
                                 <td>{{computePercentile(e.weight, 'weight', e.dateTime)}}</td>
-                                <td class="border">{{zScore(e.weight, 'weight', e.dateTime)}}</td>
+                                <td class="border"><nobr>{{zScore(e.weight, 'weight', e.dateTime)}}</nobr></td>
                                 <td>{{e.length/10}}</td>
                                 <td>{{computePercentile(e.length, 'length', e.dateTime)}}</td>
-                                <td class="border">{{zScore(e.length, 'length', e.dateTime)}}</td>
+                                <td class="border"><nobr>{{zScore(e.length, 'length', e.dateTime)}}</nobr></td>
                                 <td>{{e.headCircumference/10}}</td>
                                 <td>{{computePercentile(e.headCircumference, 'headCircumference', e.dateTime)}}</td>
-                                <td class="border">{{zScore(e.headCircumference, 'headCircumference', e.dateTime)}}</td>
+                                <td class="border"><nobr>{{zScore(e.headCircumference, 'headCircumference', e.dateTime)}}</nobr></td>
                                 <td>{{computeWfLPercentile(e.weight, e.length)}}</td>
                                 <td>{{zScoreWfL(e.weight, e.length)}}</td>
                             </tr>
