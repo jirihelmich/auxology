@@ -1,10 +1,16 @@
 function formatDate() {
     return function (date) {
-        if (!date) {
+        if (!date || !isValidDate(date)) {
             return '';
         }
         return moment(date).format("D. M. Y");
     };
+}
+
+function isValidDate(d) {
+    if ( Object.prototype.toString.call(d) !== "[object Date]" )
+        return false;
+    return !isNaN(d.getTime());
 }
 
 function formatDateTime() {
