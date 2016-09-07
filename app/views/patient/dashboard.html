@@ -56,7 +56,6 @@
                                             <table class="table table-striped table-hover">
                                                 <thead>
                                                 <tr>
-                                                    <th></th>
                                                     <th>Jméno</th>
                                                     <th>Pohlaví</th>
                                                     <th>Rodné číslo</th>
@@ -68,7 +67,6 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="p in patients">
-                                                    <td class="client-avatar"><img alt="image" src="img/profile_big.jpg"></td>
                                                     <td style="color: {{genderColor(p)}}">
                                                         <a ui-sref="patients.detail({id: p.Patient.id})" class="client-link">{{p.Person.firstName}} {{p.Person.lastName}}</a>
                                                     </td>
@@ -110,7 +108,7 @@
                                             <h2>{{selectedPatient.Person.firstName}} {{selectedPatient.Person.lastName}}</h2>
 
                                             <div class="m-b-sm">
-                                                <img alt="image" class="img-circle" src="img/a2.jpg"
+                                                <img alt="image" class="img-circle" ng-src="{{selectedPatientExaminations[0].image}}" ng-show="selectedPatientExaminations[0].image"
                                                      style="width: 62px">
                                             </div>
                                         </div>

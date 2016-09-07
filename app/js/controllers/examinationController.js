@@ -21,6 +21,7 @@ function ExaminationController($scope, $state, $stateParams, patientModel, exami
             $scope.examination.length = mmToCm(e.length);
             $scope.examination.headCircumference = mmToCm(e.headCircumference);
             $scope.examination.description = e.description;
+            $scope.examination.image = e.image;
         });
     }
 

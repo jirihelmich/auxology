@@ -15,7 +15,8 @@ angular.module('auxology').service('examinationModel', ['$q', 'sessionModel', 'l
                     description: examination.description,
                     headCircumference: numerize(examination.headCircumference),
                     weight: numerize(examination.weight),
-                    dateTime: moment(examination.dateTime, "D. M. Y H:m").toDate()
+                    dateTime: moment(examination.dateTime, "D. M. Y H:m").toDate(),
+                    image: examination.image
                 };
 
                 var examinationRow = examinationTable.createRow(examinationDb);

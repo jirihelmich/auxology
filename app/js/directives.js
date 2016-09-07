@@ -578,6 +578,30 @@ function birthNumber() {
     };
 }
 
+function imageUpload() {
+    return {
+        restrict: 'A',
+        scope: {
+            file: '='
+        },
+        link: function (scope, element) {
+
+            element.bind('change', function () {
+                var file = element[0].files[0];
+                var reader = new FileReader();
+                reader.onloadend = function(e) {
+                    scope.$apply(function () {
+                        scope.file = e.target.result;
+                        console.log(scope.file);
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+
+        }
+    };
+}
+
 /**
  *
  * Pass all functions into module
@@ -606,4 +630,5 @@ angular
     .directive('slimScroll', slimScroll)
     .directive('truncate', truncate)
     .directive('touchSpin', touchSpin)
+    .directive('imageUpload', imageUpload)
     .directive('markdownEditor', markdownEditor);
