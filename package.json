@@ -1,22 +1,14 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "auxology",
+  "version": "1.1.0",
+  "description": "An application for charting the growth of prematurely born children.",
   "main": "main.js",
-  "scripts": {
-    "start": "electron main.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/atom/electron-quick-start.git"
   },
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial"
-  ],
-  "author": "GitHub",
+  "keywords": [],
+  "author": "Jiri Helmich <jiri@helmich.cz>",
   "license": "CC0-1.0",
   "bugs": {
     "url": "https://github.com/atom/electron-quick-start/issues"
@@ -34,5 +26,10 @@
     "lovefield": "^2.1.7",
     "moment": "^2.12.0",
     "ng-lovefield": "0.0.3"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . auxology --platform win32 --arch x64 --out dist/",
+    "setup": "electron-installer-windows --src dist/auxology-win32-x64/ --dest dist/installers/"
   }
 }

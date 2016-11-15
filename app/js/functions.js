@@ -3,10 +3,16 @@ function dateFromBirthNumber(birthNumber) {
     var match = regex.exec(birthNumber);
 
     if (match) {
-        var year = parseInt(match[1]);
-        var month = parseInt(match[2]);
-        var day = parseInt(match[3]);
-        var ext = parseInt(match[4]);
+        var yearString = match[1];
+        var year = parseInt(yearString);
+
+        var monthString = match[2];
+        var month = parseInt(monthString);
+
+        var dayString = match[3];
+        var day = parseInt(dayString);
+
+        var ext = match[4];
         var c = match[5];
 
         var mod;
@@ -14,7 +20,7 @@ function dateFromBirthNumber(birthNumber) {
         if (c === '') {
             year += year < 54 ? 1900 : 1800;
         } else {
-            mod = ('' + year + month + day + ext) % 11;
+            mod = (yearString + monthString + dayString + ext) % 11;
             if (mod === 10) {
                 mod = 0;
             }
