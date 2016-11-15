@@ -15,7 +15,9 @@
   },
   "homepage": "https://github.com/atom/electron-quick-start#readme",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "electron-installer-windows": "*",
+    "electron-packager": "*"
   },
   "dependencies": {
     "angular-google-chart": "^0.1.0",
