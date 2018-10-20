@@ -52,7 +52,7 @@
 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">* Pohlaví</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-2">
                                     <select class="form-control m-b" name="account" required="required" ng-model="patient.gender">
                                         <option>---</option>
                                         <option value="female">Dívka</option>
@@ -395,7 +395,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-10 col-sm-offset-2 text-right">
-                                    <button class="btn btn-white" type="submit">Storno</button>
+                                    <button class="btn btn-white" ng-click="cancel()" type="button">Storno</button>
                                     <button class="btn btn-primary" type="submit" ng-hide="currentPatient">Přidat pacienta</button>
                                     <button class="btn btn-primary" type="submit" ng-show="currentPatient">Upravit detaily pacienta</button>
                                 </div>

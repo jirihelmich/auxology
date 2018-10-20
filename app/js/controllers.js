@@ -6,6 +6,7 @@ angular
     .controller('DetailController', DetailController)
     .controller('DashboardController', DashboardController)
     .controller('PatientController', PatientController)
+    .controller('PatientListController', PatientListController)
     .controller('ExaminationController', ExaminationController)
     .controller('LogoutController', LogoutController)
     .controller('ProfileController', ProfileController)

@@ -224,6 +224,20 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
                     .limit(count)
                     .exec();
             });
+        },
+        all: function () {
+            return lovefield.getDB().then(function (db) {
+                var patientTable = db.getSchema().table('Patient');
+                var personTable = db.getSchema().table('Person');
+
+                var doctorId = sessionModel.getCurrentUser().id;
+                return db.select()
+                    .from(patientTable)
+                    .innerJoin(personTable, personTable.id.eq(patientTable.personId))
+                    .where(patientTable.doctorId.eq(doctorId))
+                    .orderBy(personTable.lastName, lf.Order.ASC)
+                    .exec();
+            });
         }
     };
 

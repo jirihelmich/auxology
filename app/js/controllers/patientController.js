@@ -58,11 +58,34 @@ function PatientController($scope, $state, patientModel, toaster) {
 
     $scope.hasDecimal = hasDecimal;
 
+    $scope.cancel = function(){
+        $state.go('patients.dashboard', {});
+        return false;
+    }
+
     $scope.createPatient = function () {
 
-        if (!$scope.patient.birthNumber || !$scope.patient.birthWeight || !$scope.patient.gender || !$scope.patient.birthWeek) {
-            notify(toaster, 'Chyba', 'Nejsou zadány všechny povinné údaje. Maximální povolená porodní hmotnost je 2500 g. Maximální povolený gestační týden narození je 37.', 'error');
-            return;
+        var hasError = false;
+        if (!$scope.patient.birthNumber) {
+            notify(toaster, 'Chyba', 'Není zadáno rodné číslo.', 'error');
+            hasError = true;
+        }
+        if (!$scope.patient.birthWeight) {
+            notify(toaster, 'Chyba', 'Není zadána porodní hmotnost. Maximální povolená porodní hmotnost je 2500 g. ', 'error');
+            hasError = true;
+        }
+        if (!$scope.patient.gender) {
+            notify(toaster, 'Chyba', 'Není vybráno pohlaví.', 'error');
+            hasError = true;
+        }
+        if (!$scope.patient.birthWeek) {
+            notify(toaster, 'Chyba', 'Není zadán gestační týden narození. Maximální povolený gestační týden narození je 37.', 'error');
+            hasError = true;
+        }
+
+        if (hasError)
+        {
+            return true;
         }
 
         patientModel.createOrUpdate($scope.patient, $scope.mother, $scope.father).then(function (result) {
