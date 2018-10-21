@@ -1,12 +1,15 @@
 language: node_js
-node_js:
-  - '8'
+
+addons:
+  apt:
+    packages:
+      - wine
+
 matrix:
   include:
   - os: linux
     dist: xenial
     sudo: required
-  - os: osx
 cache:
   yarn: true
 script:
