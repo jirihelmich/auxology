@@ -1,4 +1,13 @@
 language: node_js
-sudo: enabled
+node_js:
+  - '8'
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    sudo: required
+  - os: osx
+cache:
+  yarn: true
 script:
     - npm run build
