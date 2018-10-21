@@ -1,5 +1,5 @@
 language: node_js
 sudo: enabled
-os: win
+os: windows
 script:
     - npm run build
