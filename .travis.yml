@@ -4,6 +4,7 @@ install: npm install
 script:
 - npm run build
 - npm run setup
+- ls dist/installers/
 addons:
   apt:
     packages:
