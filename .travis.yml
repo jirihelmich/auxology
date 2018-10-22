@@ -20,6 +20,6 @@ deploy:
   provider: releases
   api_key:
     secure: SQN8S2kD6ADXq/k12wbc76UQl8ZvgQdu78clEQVXMeqPaFAAvoEWaYEggRxzS8/t0QZyq2cdwHfOS1NMKLVPNJZa0z8mF7CNxMiiQb5erPGnodr+hFfhzWZ0A7dUN9dqu4v6DiF6MrlSee0gnh+XMSbChXqB1JhKvPirIGZe0UmzSUwLl9UEJzXPsvO4r5Xps4cHJ9wVHLlYyB2pXLaai2L2YJp91xOo2y9BcR0eke4ZI6Y4fzEg5yiZ7qU/pCE33ksi4F8D+0c+bpfI2uDlCEJX+V0ZYejMAAe3Ef4PIn2n218hpZoWF7cJ0Pc+27OCi1S9JxZebjrYlUFYY1Ga5izultjE+L4W+34y4ftbbBn8MRKmK/e5QKvXCaxFKAyudBkKwkJKSnXXrgEkOzT4qaSO73GxUr4xfOnCjS1X4RDkdGlcH1yc7FjvizLWA+AQumR2y0IwB3U8DoEcdkPq061hEd5+VH/LHcWII0QiGMnEaGNmYO1neB4g+4gwGqdpZCrTNKoWz/uG5r6n+HsIIzBBQ+LjDGs8Ayru+8gIM/A0EF7Vz19JIDzGib0WGJ4PfigdqFP2mrRqoR6R/VxWjSLDPi+4ongOWDJ++o1tE0+TBeuiF+B6TcCwHCvWYMSruyd/3DxMkS0LWL9l6aJxndhl+T+xZ2QKo20KXyg1IF8=
-  file: dist/installers/auxology-win32-x64.msi
+  file: dist/installers/auxology-1.2.0-setup.exe
   on:
     repo: jirihelmich/auxology
