@@ -22,6 +22,7 @@ before_deploy:
   - git config --local user.name "jirihelmich"
   - git config --local user.email "jiri@helmich.cz"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+
 deploy:
   provider: releases
   api_key:
@@ -29,5 +30,4 @@ deploy:
   file: dist/installers/auxology-1.2.0-setup.exe
   on:
     repo: jirihelmich/auxology
-    tags: true
   skip_cleanup: true
