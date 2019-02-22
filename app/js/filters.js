@@ -175,6 +175,20 @@ function birthNumber() {
     };
 }
 
+function mmToCm() {
+    return function (mm) {
+        if (!mm) {
+            return '-';
+        }
+
+        var cm = mm / 10;
+        if (!hasDecimal(cm)) {
+            return cm + ".0";
+        }
+        return "" + cm;
+    }
+}
+
 angular
     .module('auxology')
     .filter('formatDate', formatDate)
@@ -184,4 +198,5 @@ angular
     .filter('birthNumber', birthNumber)
     .filter('correctedAge', correctedAge)
     .filter('age', age)
+    .filter('mmToCm', mmToCm)
     .filter('gestationalAge', gestationalAge);

@@ -46,12 +46,17 @@
 
                             <table class="table">
                                 <tr>
-                                    <th><i class="fa fa-calendar"></i> Datum narození</th>
+                                    <th><i class="fa fa-calendar"></i> Datum narození dle r.č.</th>
                                     <td>{{ patient.Person.birthNumber | birthDate }}</td>
                                 </tr>
+                                <!--
+                                <tr>
+                                    <th><i class="fa fa-calendar"></i> Datum narození</th>
+                                    <td>{{ patient.Person.birthDate | formatDate }}</td>
+                                </tr>-->
                                 <tr>
                                     <th><i class="fa fa-calendar"></i> Kalkulovaný termín porodu</th>
-                                    <td>{{patient | expectedBirth}}</td>
+                                    <td>{{patient | expectedBirth }}</td>
                                 </tr>
                                 <tr>
                                     <th><i class="fa fa-calendar"></i> Plánovaný termín porodu</th>
@@ -86,7 +91,7 @@
                                 <div class="col-md-4">
                                     {{inlineDataLength | json}}
                                     <div sparkline spark-data="inlineData.length" spark-options="inlineOptions"></div>
-                                    <h5><strong>{{examinations[0].length/10}} cm</strong> délka</h5>
+                                    <h5><strong>{{examinations[0].length | mmToCm }} cm</strong> délka</h5>
                                 </div>
                                 <div class="col-md-4">
                                     {{inlineDataWeight | json}}
@@ -96,7 +101,7 @@
                                 <div class="col-md-4">
                                     {{inlineDataCircumference | json}}
                                     <div sparkline spark-data="inlineData.circumference" spark-options="inlineOptions"></div>
-                                    <h5><strong>{{examinations[0].headCircumference/10}} cm</strong> hlava</h5>
+                                    <h5><strong>{{examinations[0].headCircumference | mmToCm }} cm</strong> hlava</h5>
                                 </div>
                             </div>
                             <div class="user-button hidden-print">
@@ -149,7 +154,7 @@
                                         <table class="table table-condensed">
                                             <tr>
                                                 <th>Tělěsná délka</th>
-                                                <td>{{e.length/10}} cm</td>
+                                                <td>{{e.length | mmToCm }} cm</td>
                                             </tr>
                                             <tr>
                                                 <th>Tělěsná hmotnost</th>
@@ -157,7 +162,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Obvod hlavy</th>
-                                                <td>{{e.headCircumference/10}} cm</td>
+                                                <td>{{e.headCircumference | mmToCm }} cm</td>
                                             </tr>
                                         </table>
                                         <div class="actions pull-right">
@@ -180,9 +185,11 @@
 
                         </div>
 
+                        
+                        <div style="clear: both;">&nbsp;</div>
+
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -264,10 +271,10 @@
                                 <td><nobr>{{e.weight}}</nobr></td>
                                 <td>{{computePercentile(e.weight, 'weight', e.dateTime)}}</td>
                                 <td class="border"><nobr>{{zScore(e.weight, 'weight', e.dateTime)}}</nobr></td>
-                                <td>{{e.length/10}}</td>
+                                <td>{{e.length | mmToCm }}</td>
                                 <td>{{computePercentile(e.length, 'length', e.dateTime)}}</td>
                                 <td class="border"><nobr>{{zScore(e.length, 'length', e.dateTime)}}</nobr></td>
-                                <td>{{e.headCircumference/10}}</td>
+                                <td>{{e.headCircumference | mmToCm }}</td>
                                 <td>{{computePercentile(e.headCircumference, 'headCircumference', e.dateTime)}}</td>
                                 <td class="border"><nobr>{{zScore(e.headCircumference, 'headCircumference', e.dateTime)}}</nobr></td>
                                 <td>{{computeWfLPercentile(e.weight, e.length)}}</td>
@@ -314,11 +321,11 @@
                                     </tr>
                                     <tr>
                                         <th>Výška [cm]</th>
-                                        <td>{{p.Person.length/10 || ''}}</td>
+                                        <td>{{p.Person.length | mmToCm }}</td>
                                     </tr>
                                     <tr>
                                         <th>Obvod hlavy [cm]</th>
-                                        <td>{{p.Person.headCircumference/10 || ''}}</td>
+                                        <td>{{p.Person.headCircumference | mmToCm }}</td>
                                     </tr>
                                     <tr><td colspan="2">&nbsp;</td></tr>
                                     <tr>

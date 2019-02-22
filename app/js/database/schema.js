@@ -23,6 +23,7 @@ function dbSchema(lovefieldProvider) {
         .addColumn('email', lf.Type.STRING)
         .addColumn('phone', lf.Type.STRING)
         .addColumn('birthNumber', lf.Type.STRING)
+        .addColumn('birthDate', lf.Type.DATE_TIME)
         .addColumn('addressId', lf.Type.INTEGER)
         .addColumn('weight', lf.Type.INTEGER)
         .addColumn('length', lf.Type.INTEGER)
@@ -42,6 +43,7 @@ function dbSchema(lovefieldProvider) {
             'email',
             'phone',
             'birthNumber',
+            'birthDate',
             'weight',
             'length',
             'headCircumference',

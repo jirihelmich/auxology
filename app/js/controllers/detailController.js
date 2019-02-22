@@ -109,16 +109,18 @@ function DetailController($scope, $stateParams, patientModel, $state, examinatio
             var inlineDataCircumference = [];
 
             examinations.forEach(function (e) {
-                var week = correctedWeek($scope.patient, e.dateTime);
+                if (e.length) {
+                    var week = correctedWeek($scope.patient, e.dateTime);
 
-                inlineDataWeight.unshift(e.weight);
-                inlineDataLength.unshift(e.length);
-                inlineDataCircumference.unshift(e.headCircumference);
+                    inlineDataWeight.unshift(e.weight);
+                    inlineDataLength.unshift(e.length);
+                    inlineDataCircumference.unshift(e.headCircumference);
 
-                weights[week] = e.weight;
-                lengths[week] = e.length;
-                headCircumferences[week] = e.headCircumference;
-                weightsForLengths[Math.floor(e.length / 10)] = e.weight;
+                    weights[week] = e.weight;
+                    lengths[week] = e.length;
+                    headCircumferences[week] = e.headCircumference;
+                    weightsForLengths[Math.floor(e.length / 10)] = e.weight;
+                }
             });
 
             if (patient.Patient.birthWeight) {

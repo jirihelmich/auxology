@@ -107,14 +107,15 @@ function hasDecimal(string) {
 }
 
 function mmToCm(mm) {
-    if (mm) {
-        var cm = mm / 10;
-        if (!hasDecimal(cm)) {
-            return cm + ".0";
-        }
-        return "" + cm;
+    if (!mm) {
+        return '';
     }
-    return "";
+
+    var cm = mm / 10;
+    if (!hasDecimal(cm)) {
+        return cm + ".0";
+    }
+    return "" + cm;
 }
 
 safeApply = function ($scope, fn) {
