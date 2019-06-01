@@ -24,6 +24,10 @@ function DashboardController($scope, patientModel, examinationModel) {
         }
     };
 
+    $scope.export = function() {
+        patientModel.exportDB();
+    }
+
     $scope.reset = function () {
         patientModel.recent(10).then(patientsLoaded, error);
     };

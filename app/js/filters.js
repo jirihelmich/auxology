@@ -38,12 +38,13 @@ function birthDate() {
 }
 
 function getAgeDiff(patient, asOf) {
+
     var now = asOf ? moment(asOf) : moment();
     var birthDate = moment(birthDateObjectToDate(dateFromBirthNumber(patient.Person.birthNumber)));
     var diffDays = now.diff(birthDate, 'days');
     var diffWeeks = now.diff(birthDate, 'weeks');
     var diffMonths = now.diff(birthDate, 'months');
-
+    
     return {
         days: diffDays,
         weeks: diffWeeks,

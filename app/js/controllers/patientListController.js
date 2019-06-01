@@ -4,6 +4,7 @@ function PatientListController($scope, patientModel) {
     patientModel.all().then(function (patients) {
         safeApply($scope, function () {
             $scope.patients = patients;
+            $scope.count = patients.length;
         });
     });
 }

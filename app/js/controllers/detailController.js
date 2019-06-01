@@ -111,6 +111,10 @@ function DetailController($scope, $stateParams, patientModel, $state, examinatio
             examinations.forEach(function (e) {
                 if (e.length) {
                     var week = correctedWeek($scope.patient, e.dateTime);
+                    
+                    if (week < 0) {
+                        return;
+                    }
 
                     inlineDataWeight.unshift(e.weight);
                     inlineDataLength.unshift(e.length);

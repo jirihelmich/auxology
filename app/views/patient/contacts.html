@@ -14,6 +14,10 @@
                 </li>
             </ol>
         </div>
+        <div class="col-lg-3">
+            <br /><br />
+            <p>Celkem evidováno pacientů: {{count}}.</p>
+        </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
@@ -22,19 +26,13 @@
 
                     <a ui-sref="patients.detail({id: patient.Patient.id})" class="client-link">
 
-                        <img alt="image" class="img-circle" src="img/a2.jpg">
-
+                        <!--<img alt="image" class="img-circle" src="img/a2.jpg">-->
 
                         <h3 class="m-b-xs"><strong>{{patient.Person.firstName}} {{patient.Person.lastName}}</strong></h3>
 
+                        <div class="font-bold">ID: {{patient.Patient.id}}</div>
                         <div class="font-bold">{{patient.Person.birthNumber | birthDate}} ({{ patient.Person.birthNumber | birthNumber }})</div>
                         <div class="font-bold">{{ patient.Patient.birthWeek }}. týden</div>
-
-                        <!--<address class="m-t-md">
-                            <strong>hmotnost:</strong> 2765 g<br/>
-                            <strong>Délka:</strong> 67 cm<br/>
-                            <strong>Obvod hlavy:</strong> 42 cm<br/>
-                        </address>-->
                     </a>
                 </div>
             </div>
