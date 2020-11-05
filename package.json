@@ -32,6 +32,6 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-packager . auxology --platform win32 --arch x64 --out dist/",
-    "setup": "electron-installer-windows --src dist/auxology-win32-x64/ --dest dist/installers/"
+    "setup": "electron-installer-windows --src dist/auxology-win32-x64/ --dest dist/installers/ --icon favicon.ico"
   }
 }
