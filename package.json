@@ -26,7 +26,7 @@
     "angularjs-toaster": "^2.0.0",
     "bcrypt-nodejs": "0.0.3",
     "lovefield": "^2.1.7",
-    "moment": "^2.12.0",
+    "moment": "^2.29.2",
     "ng-lovefield": "0.0.3"
   },
   "scripts": {
