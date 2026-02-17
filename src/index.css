@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1ab394;
+  --color-primary-dark: #18a689;
+  --color-male: #1c84c6;
+  --color-female: #ed5565;
+  --color-navy: #1a7bb5;
+  --color-gray-bg: #f3f3f4;
+}
+
+body {
+  @apply bg-gray-bg text-gray-800 font-sans text-sm;
+}
+
+@media print {
+  .hidden-print {
+    display: none !important;
+  }
+}

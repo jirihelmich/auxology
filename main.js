@@ -9,15 +9,16 @@ function createWindow() {
         width: 800,
         height: 600,
         title: "Monitoring růstu nedonošených dětí",
-        icon: path.join(__dirname, 'app', 'img', 'favicon.ico'),
+        icon: path.join(__dirname, 'public', 'img', 'favicon.ico'),
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false,
-            sandbox: true
+            sandbox: true,
+            acceptFirstMouse: true
         }
     });
     mainWindow.maximize();
-    mainWindow.loadFile(path.join(__dirname, 'app', 'index.html'));
+    mainWindow.loadFile(path.join(__dirname, 'dist-renderer', 'index.html'));
     mainWindow.on('closed', () => { mainWindow = null; });
 }
 
