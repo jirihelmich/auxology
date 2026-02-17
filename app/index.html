@@ -19,7 +19,7 @@
     <!-- Main Inspinia CSS files -->
     <link href="css/animate.css" rel="stylesheet">
     <link id="loadBefore" href="css/style.css" rel="stylesheet" />
-    <link href="../node_modules/angularjs-toaster/toaster.min.css" rel="stylesheet" />
+    <link href="css/toaster.min.css" rel="stylesheet" />
 
 
 </head>
@@ -31,10 +31,10 @@
 <!-- Main view  -->
 <div ui-view></div>
 
+<script src="js/jquery/jquery-2.1.1.min.js"></script>
+<script src="js/lib/lovefield.js"></script>
+<script src="js/lib/bcrypt.js"></script>
 <script>
-    window.$ = window.jQuery = require('./js/jquery/jquery-2.1.1.min.js');
-    window.lf = window.loveField = require('../node_modules/lovefield/dist/lovefield.js');
-    window.bcrypt = require('../node_modules/bcrypt-nodejs/bCrypt.js');
     window.statisticalData = {
         male: {
             under: {},
@@ -49,8 +49,8 @@
 
 <script src="js/database/schema.js"></script>
 
-<script src="../node_modules/moment/moment.js"></script>
-<script src="../node_modules/moment/locale/cs.js"></script>
+<script src="js/lib/moment.js"></script>
+<script src="js/lib/moment-locale-cs.js"></script>
 
 <!-- jQuery and Bootstrap -->
 <script src="js/plugins/jquery-ui/jquery-ui.js"></script>
@@ -77,10 +77,10 @@
 <script src="js/ui-router/angular-ui-router.min.js"></script>
 <script src="js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
 <script src="js/plugins/angular-idle/angular-idle.js"></script>
-<script src="../node_modules/angular-google-chart/ng-google-chart.min.js"></script>
-<script src="../node_modules/ng-lovefield/dest/ng-lovefield.min.js"></script>
-<script src="../node_modules/angular-local-storage/dist/angular-local-storage.min.js"></script>
-<script src="../node_modules/angularjs-toaster/toaster.min.js"></script>
+<script src="js/lib/ng-google-chart.min.js"></script>
+<script src="js/lib/ng-lovefield.min.js"></script>
+<script src="js/lib/angular-local-storage.min.js"></script>
+<script src="js/lib/toaster.min.js"></script>
 
 <!-- Anglar App Script -->
 <script src="js/functions.js"></script>

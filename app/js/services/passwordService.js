@@ -14,7 +14,7 @@ angular.module('auxology').service('passwordService', ['asyncUtils', function (a
     return {
         hash: function (password) {
             return asyncUtils.deferredAction(function (resolve, reject) {
-                bcrypt.hash(password, null, angular.noop, onResultFactory(resolve, reject));
+                bcrypt.hash(password, 10, onResultFactory(resolve, reject));
             });
         },
         compare: function (password, encryptedPassword) {

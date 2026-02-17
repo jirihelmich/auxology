@@ -1,37 +1,46 @@
 {
   "name": "auxology",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "An application for charting the growth of prematurely born children.",
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atom/electron-quick-start.git"
+    "url": "git+https://github.com/jirihelmich/auxology.git"
   },
   "keywords": [],
   "author": "Jiri Helmich <jiri@helmich.cz>",
   "license": "CC0-1.0",
   "bugs": {
-    "url": "https://github.com/atom/electron-quick-start/issues"
+    "url": "https://github.com/jirihelmich/auxology/issues"
   },
-  "homepage": "https://github.com/atom/electron-quick-start#readme",
+  "homepage": "https://github.com/jirihelmich/auxology#readme",
   "devDependencies": {
-    "electron": "^3.0.5",
-    "electron-installer-windows": "*",
-    "electron-packager": "^12.2.0",
-    "electron-prebuilt": "^0.36.11"
-  },
-  "dependencies": {
-    "angular-google-chart": "^0.1.0",
-    "angular-local-storage": "^0.2.7",
-    "angularjs-toaster": "^2.0.0",
-    "bcrypt-nodejs": "0.0.3",
-    "lovefield": "^2.1.7",
-    "moment": "^2.12.0",
-    "ng-lovefield": "0.0.3"
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
   },
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager . auxology --platform win32 --arch x64 --out dist/",
-    "setup": "electron-installer-windows --src dist/auxology-win32-x64/ --dest dist/installers/ --icon favicon.ico"
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build": "electron-builder --mac --win"
+  },
+  "build": {
+    "appId": "cz.helmich.auxology",
+    "productName": "Auxology",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "app/**/*"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "app/img/favicon.ico"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "app/img/favicon.ico"
+    }
   }
 }

@@ -78,8 +78,12 @@ angular.module('auxology').service('patientModel', ['$q', 'sessionModel', 'lovef
         exportDB: function () {
             lovefield.getDB().then(function(db) {
                 db.export().then(function(data) {
-                    var downloadData = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-                    window.open("data:" + downloadData);
+                    var blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'auxology-export.json';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
                 });
             });
         },
