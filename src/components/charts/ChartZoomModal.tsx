@@ -8,10 +8,11 @@ interface ChartZoomModalProps {
   genderColor: string;
   xLabel?: string;
   yLabel?: string;
+  patientName?: string;
   onClose: () => void;
 }
 
-export function ChartZoomModal({ data, title, genderColor, xLabel, yLabel, onClose }: ChartZoomModalProps) {
+export function ChartZoomModal({ data, title, genderColor, xLabel, yLabel, patientName, onClose }: ChartZoomModalProps) {
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       <div className="flex justify-end p-4">
@@ -28,6 +29,7 @@ export function ChartZoomModal({ data, title, genderColor, xLabel, yLabel, onClo
           genderColor={genderColor}
           height={700}
           showLegend
+          patientName={patientName}
         />
       </div>
     </div>

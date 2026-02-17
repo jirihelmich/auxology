@@ -9,10 +9,14 @@ export function AppLayout() {
   useIdleLogout();
 
   return (
-    <div className="min-h-screen bg-gray-bg">
-      <Sidebar collapsed={collapsed} />
-      <div className={`transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-60'}`}>
-        <TopNav onToggleSidebar={() => setCollapsed((c) => !c)} />
+    <div className="min-h-screen bg-gray-bg print:bg-white">
+      <div className="hidden-print">
+        <Sidebar collapsed={collapsed} />
+      </div>
+      <div className={`transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-60'} print:!ml-0`}>
+        <div className="hidden-print">
+          <TopNav onToggleSidebar={() => setCollapsed((c) => !c)} />
+        </div>
         <main>
           <Outlet />
         </main>

@@ -96,7 +96,7 @@ export function LoginPage() {
           <div className="bg-white rounded-lg p-4 inline-block">
             <p className="text-xs text-gray-500 mb-3">
               Tento program byl podpořen v rámci projektu &quot;Nové metody v následné péči o děti s perinatální
-              zátěží v CKP KDDL VFN&quot;, reg. č. NF-CZ11-OV-1-009-2015.
+              zátěží v CKP KDDL VFN&quot;, reg.&nbsp;č.&nbsp;NF&#8209;CZ11&#8209;OV&#8209;1&#8209;009&#8209;2015.
             </p>
             <p className="text-xs text-gray-500 mb-3">
               Podpořeno grantem z Norska. Supported by a grant from Norway.

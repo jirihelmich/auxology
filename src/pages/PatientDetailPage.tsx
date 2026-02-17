@@ -336,6 +336,7 @@ export function PatientDetailPage() {
               genderName={genderName}
               weightCategoryName={weightCategoryName}
               birthWeight={patient.Patient.birthWeight}
+              patientName={`${patient.Person.firstName} ${patient.Person.lastName}`}
               onZoom={setZoomedChart}
             />
           </Card>
@@ -438,6 +439,7 @@ export function PatientDetailPage() {
           xLabel={zoomChartConfig[zoomedChart].xLabel}
           yLabel={zoomChartConfig[zoomedChart].yLabel}
           genderColor={color}
+          patientName={patient ? `${patient.Person.firstName} ${patient.Person.lastName}` : undefined}
           onClose={() => setZoomedChart(null)}
         />
       )}

@@ -10,6 +10,7 @@ interface GrowthChartGridProps {
   genderName: string;
   weightCategoryName: string;
   birthWeight?: number;
+  patientName?: string;
   onZoom?: (chart: 'weight' | 'length' | 'headCircumference' | 'weightForLength') => void;
 }
 
@@ -22,6 +23,7 @@ export function GrowthChartGrid({
   genderName,
   weightCategoryName,
   birthWeight,
+  patientName,
   onZoom,
 }: GrowthChartGridProps) {
   const suffix = `, ${genderName} s porodní hmotností ${weightCategoryName} 1500 g`;
@@ -34,6 +36,7 @@ export function GrowthChartGrid({
         xLabel="Korigovaný věk"
         yLabel="Tělesná délka [cm]"
         genderColor={genderColor}
+        patientName={patientName}
         yMin={35}
         onClick={onZoom ? () => onZoom('length') : undefined}
       />
@@ -43,6 +46,7 @@ export function GrowthChartGrid({
         xLabel="Korigovaný věk"
         yLabel="Hmotnost [g]"
         genderColor={genderColor}
+        patientName={patientName}
         onClick={onZoom ? () => onZoom('weight') : undefined}
       />
       <GrowthChart
@@ -51,6 +55,7 @@ export function GrowthChartGrid({
         xLabel="Tělesná délka [cm]"
         yLabel="Hmotnost [g]"
         genderColor={genderColor}
+        patientName={patientName}
         onClick={onZoom ? () => onZoom('weightForLength') : undefined}
       />
       <GrowthChart
@@ -59,6 +64,7 @@ export function GrowthChartGrid({
         xLabel="Korigovaný věk"
         yLabel="Obvod hlavy [cm]"
         genderColor={genderColor}
+        patientName={patientName}
         onClick={onZoom ? () => onZoom('headCircumference') : undefined}
       />
     </div>

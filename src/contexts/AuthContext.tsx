@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import bcrypt from 'bcryptjs';
+import toast from 'react-hot-toast';
 import { useDatabase } from './DatabaseContext';
 import type { User } from '../types/database';
 
@@ -45,12 +46,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     setCurrentUser(user);
+    toast.success('Přihlášení proběhlo úspěšně.');
     return user;
   }, [db]);
 
   const signOut = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
     setCurrentUser(null);
+    toast.success('Odhlášení proběhlo úspěšně.');
   }, []);
 
   return (
