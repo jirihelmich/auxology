@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import bcrypt from 'bcryptjs';
 import toast from 'react-hot-toast';
 import { useDatabase } from './DatabaseContext';
+import { useT } from '../i18n/LanguageContext';
 import type { User } from '../types/database';
 
 interface AuthContextValue {
@@ -29,6 +30,7 @@ function loadUser(): User | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { db } = useDatabase();
+  const { t } = useT();
   const [currentUser, setCurrentUser] = useState<User | null>(loadUser);
 
   const signIn = useCallback(async (username: string, password: string): Promise<User | false> => {
@@ -46,15 +48,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     setCurrentUser(user);
-    toast.success('Přihlášení proběhlo úspěšně.');
+    toast.success(t.loginSuccess);
     return user;
-  }, [db]);
+  }, [db, t]);
 
   const signOut = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
     setCurrentUser(null);
-    toast.success('Odhlášení proběhlo úspěšně.');
-  }, []);
+    toast.success(t.logoutSuccess);
+  }, [t]);
 
   return (
     <AuthContext.Provider value={{ currentUser, signIn, signOut }}>

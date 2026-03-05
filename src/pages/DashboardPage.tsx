@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, List, Download, Search, Info, User, Activity, Baby } from 'lucide-react';
 import { usePatients } from '../hooks/usePatients';
 import { useExaminations } from '../hooks/useExaminations';
+import { useT } from '../i18n/LanguageContext';
 import { genderColor } from '../utils/color';
 import { formatBirthNumber } from '../utils/birth-number';
 import { birthDateFromNumber } from '../utils/age';
@@ -15,6 +16,7 @@ import type { PatientWithPerson, Examination } from '../types/database';
 export function DashboardPage() {
   const { search, recent, exportDB } = usePatients();
   const { getAllByPatient } = useExaminations();
+  const { t } = useT();
   const [patients, setPatients] = useState<PatientWithPerson[]>([]);
   const [searchToken, setSearchToken] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<PatientWithPerson | null>(null);
@@ -48,16 +50,16 @@ export function DashboardPage() {
   return (
     <div>
       <PageHeader
-        title="Pacienti"
+        title={t.patients}
         breadcrumbs={[
-          { label: 'Monitoring růstu nedonošených dětí', to: '/patients/dashboard' },
-          { label: 'Pacienti' },
+          { label: t.breadcrumbHome, to: '/patients/dashboard' },
+          { label: t.patients },
         ]}
         actions={
           <>
-            <Link to="/patients/new"><Button><Plus size={14} /> Nový pacient</Button></Link>
-            <Link to="/patients/list"><Button><List size={14} /> Seznam pacientů</Button></Link>
-            <Button onClick={() => exportDB()}><Download size={14} /> Export</Button>
+            <Link to="/patients/new"><Button><Plus size={14} /> {t.dashboardNewPatient}</Button></Link>
+            <Link to="/patients/list"><Button><List size={14} /> {t.dashboardPatientList}</Button></Link>
+            <Button onClick={() => exportDB()}><Download size={14} /> {t.export}</Button>
           </>
         }
       />
@@ -65,36 +67,36 @@ export function DashboardPage() {
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <Card title="Pacienti">
+            <Card title={t.patients}>
               <p className="text-sm text-gray-500 mb-4">
-                Můžete vyhledat pacienta podle příjmení nebo rodného čísla.
+                {t.dashboardSearchHelp}
               </p>
               <form onSubmit={handleSearch} className="flex gap-2 mb-4">
                 <input
                   type="text"
                   className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                  placeholder="Vyhledat pacienta"
+                  placeholder={t.dashboardSearchPlaceholder}
                   value={searchToken}
                   onChange={(e) => setSearchToken(e.target.value)}
                 />
                 <Button variant="primary" type="submit">
-                  <Search size={14} /> Hledat
+                  <Search size={14} /> {t.dashboardSearch}
                 </Button>
               </form>
 
-              <div className="text-xs text-gray-500 mb-2">{patients.length} výsledků</div>
+              <div className="text-xs text-gray-500 mb-2">{t.dashboardResults(patients.length)}</div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 text-left">
-                      <th className="py-2 px-2">ID</th>
-                      <th className="py-2 px-2">Jméno</th>
-                      <th className="py-2 px-2">Pohlaví</th>
-                      <th className="py-2 px-2">Rodné číslo</th>
-                      <th className="py-2 px-2">Datum narození</th>
-                      <th className="py-2 px-2">GT narození</th>
-                      <th className="py-2 px-2">Porodní hmotnost</th>
+                      <th className="py-2 px-2">{t.thId}</th>
+                      <th className="py-2 px-2">{t.thName}</th>
+                      <th className="py-2 px-2">{t.thGender}</th>
+                      <th className="py-2 px-2">{t.thBirthNumber}</th>
+                      <th className="py-2 px-2">{t.thBirthDate}</th>
+                      <th className="py-2 px-2">{t.thGestationalWeek}</th>
+                      <th className="py-2 px-2">{t.thBirthWeight}</th>
                       <th className="py-2 px-2"></th>
                     </tr>
                   </thead>
@@ -134,7 +136,7 @@ export function DashboardPage() {
                     ))}
                     {patients.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="py-4 text-center text-gray-400">Žádní pacienti.</td>
+                        <td colSpan={8} className="py-4 text-center text-gray-400">{t.dashboardNoPatients}</td>
                       </tr>
                     )}
                   </tbody>
@@ -160,7 +162,7 @@ export function DashboardPage() {
                   )}
 
                   <p className="text-sm text-gray-500 mb-4">
-                    {selectedPatient.Person.description || 'Žádné poznámky.'}
+                    {selectedPatient.Person.description || t.noNotes}
                   </p>
 
                   <div className="space-y-2 mb-4">
@@ -168,25 +170,25 @@ export function DashboardPage() {
                       to={`/examinations/new/${selectedPatient.Patient.id}`}
                       className="block w-full text-center bg-primary text-white py-2 rounded text-sm hover:bg-primary-dark transition-colors"
                     >
-                      <Plus size={14} className="inline mr-1" /> Nové vyšetření
+                      <Plus size={14} className="inline mr-1" /> {t.dashboardNewExamination}
                     </Link>
                     <Link
                       to={`/patients/detail/${selectedPatient.Patient.id}`}
                       className="block w-full text-center border border-gray-300 text-gray-700 py-2 rounded text-sm hover:bg-gray-50 transition-colors"
                     >
-                      <User size={14} className="inline mr-1" /> Detail pacienta
+                      <User size={14} className="inline mr-1" /> {t.dashboardPatientDetail}
                     </Link>
                   </div>
 
                   {selectedExaminations.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-sm"><strong>Poslední návštěva:</strong> {formatDateTime(selectedExaminations[0].dateTime)}</p>
-                      <p className="text-sm text-gray-500 mt-1">{selectedExaminations[0].description || 'Žádné poznámky.'}</p>
+                      <p className="text-sm"><strong>{t.dashboardLastVisit}</strong> {formatDateTime(selectedExaminations[0].dateTime)}</p>
+                      <p className="text-sm text-gray-500 mt-1">{selectedExaminations[0].description || t.noNotes}</p>
                     </div>
                   )}
 
                   <hr className="my-4" />
-                  <h6 className="font-semibold text-gray-700 mb-3">Časová osa</h6>
+                  <h6 className="font-semibold text-gray-700 mb-3">{t.dashboardTimeline}</h6>
                   <div className="space-y-3">
                     {selectedExaminations.map((e) => (
                       <div key={e.id} className="flex items-start gap-3">
@@ -194,7 +196,7 @@ export function DashboardPage() {
                           <Activity size={14} className="text-gray-500" />
                         </div>
                         <div>
-                          <p className="text-sm">Vyšetření</p>
+                          <p className="text-sm">{t.dashboardExamination}</p>
                           <p className="text-xs text-gray-400">{formatDateTime(e.dateTime)}</p>
                         </div>
                       </div>
@@ -205,7 +207,7 @@ export function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-sm">
-                          Narozen{selectedPatient.Person.gender === 'female' ? 'a' : ''}
+                          {selectedPatient.Person.gender === 'female' ? t.dashboardBornFemale : t.dashboardBornMale}
                         </p>
                         <p className="text-xs text-gray-400">
                           {birthDateFromNumber(selectedPatient.Person.birthNumber || '')}
@@ -216,7 +218,7 @@ export function DashboardPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-gray-400">
-                  <Info size={16} /> Pro náhled nejprve zvolte pacienta.
+                  <Info size={16} /> {t.dashboardSelectPatient}
                 </div>
               )}
             </Card>

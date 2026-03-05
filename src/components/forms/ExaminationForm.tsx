@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import toast from 'react-hot-toast';
 import { useExaminations, type ExaminationFormData } from '../../hooks/useExaminations';
+import { useT } from '../../i18n/LanguageContext';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
@@ -19,6 +20,7 @@ interface ExaminationFormProps {
 
 export function ExaminationForm({ patientId, patient, initialExamination }: ExaminationFormProps) {
   const { createOrUpdate } = useExaminations();
+  const { t } = useT();
   const navigate = useNavigate();
 
   const [examination, setExamination] = useState<ExaminationFormData>({
@@ -44,7 +46,7 @@ export function ExaminationForm({ patientId, patient, initialExamination }: Exam
 
     const parsed = dayjs(examination.dateTime, 'D. M. YYYY H:m');
     if (parsed.toDate().getFullYear() < 1950) {
-      toast.error('Rok vyšetření je před rokem 1950.');
+      toast.error(t.errorYearBefore1950);
       return;
     }
 
@@ -53,7 +55,7 @@ export function ExaminationForm({ patientId, patient, initialExamination }: Exam
       navigate(`/patients/detail/${patientId}`);
     } catch (err) {
       console.error(err);
-      toast.error('Nečekaná chyba.');
+      toast.error(t.errorUnexpected);
     }
   };
 
@@ -63,43 +65,43 @@ export function ExaminationForm({ patientId, patient, initialExamination }: Exam
   return (
     <form onSubmit={handleSubmit}>
       <Card
-        title={isEdit ? 'Editovat vyšetření' : 'Nové vyšetření'}
-        subtitle="Zadejte, prosím, naměřené údaje."
+        title={isEdit ? t.examFormEditTitle : t.examFormNewTitle}
+        subtitle={t.examFormSubtitle}
       >
         <div className="space-y-4">
-          <Input label="Datum vyšetření" placeholder="17. 3. 2016 12:54" value={examination.dateTime} onChange={(e) => update('dateTime', e.target.value)} />
-          <TextArea label="Poznámky" value={examination.description || ''} onChange={(e) => update('description', e.target.value)} />
+          <Input label={t.labelExamDate} placeholder="17. 3. 2016 12:54" value={examination.dateTime} onChange={(e) => update('dateTime', e.target.value)} />
+          <TextArea label={t.labelNotes} value={examination.description || ''} onChange={(e) => update('description', e.target.value)} />
 
           <hr className="border-dashed" />
 
           {!isEdit && (lastExam ? (
             <div className="bg-navy/10 rounded-lg p-4 mb-4">
-              <h6 className="font-semibold text-gray-700 mb-2">Hodnoty naměřené při posledním vyšetření</h6>
+              <h6 className="font-semibold text-gray-700 mb-2">{t.lastExamValues}</h6>
               <div className="grid grid-cols-3 gap-4 text-sm">
-                <div><span className="text-gray-500">Tělesná délka:</span> {lastExam.length / 10} cm ({lastExam.length} mm)</div>
-                <div><span className="text-gray-500">Tělesná hmotnost:</span> {lastExam.weight} g</div>
-                <div><span className="text-gray-500">Obvod hlavy:</span> {lastExam.headCircumference / 10} cm ({lastExam.headCircumference} mm)</div>
+                <div><span className="text-gray-500">{t.labelBodyLength}</span> {lastExam.length / 10} cm ({lastExam.length} mm)</div>
+                <div><span className="text-gray-500">{t.labelBodyWeight}</span> {lastExam.weight} g</div>
+                <div><span className="text-gray-500">{t.labelHeadCircumference}</span> {lastExam.headCircumference / 10} cm ({lastExam.headCircumference} mm)</div>
               </div>
             </div>
           ) : patient?.Patient && (
             <div className="bg-navy/10 rounded-lg p-4 mb-4">
-              <h6 className="font-semibold text-gray-700 mb-2">Porodní údaje</h6>
+              <h6 className="font-semibold text-gray-700 mb-2">{t.birthData}</h6>
               <div className="grid grid-cols-3 gap-4 text-sm">
-                {patient.Patient.birthLength != null && <div><span className="text-gray-500">Porodní délka:</span> {patient.Patient.birthLength / 10} cm ({patient.Patient.birthLength} mm)</div>}
-                <div><span className="text-gray-500">Porodní hmotnost:</span> {patient.Patient.birthWeight} g</div>
-                {patient.Patient.birthHeadCircumference != null && <div><span className="text-gray-500">Porodní obvod hlavy:</span> {patient.Patient.birthHeadCircumference / 10} cm ({patient.Patient.birthHeadCircumference} mm)</div>}
+                {patient.Patient.birthLength != null && <div><span className="text-gray-500">{t.labelBirthLengthColon}</span> {patient.Patient.birthLength / 10} cm ({patient.Patient.birthLength} mm)</div>}
+                <div><span className="text-gray-500">{t.labelBirthWeightColon}</span> {patient.Patient.birthWeight} g</div>
+                {patient.Patient.birthHeadCircumference != null && <div><span className="text-gray-500">{t.labelBirthHeadCircColon}</span> {patient.Patient.birthHeadCircumference / 10} cm ({patient.Patient.birthHeadCircumference} mm)</div>}
               </div>
             </div>
           ))}
 
-          <MeasurementInput label="Délka" value={String(examination.length)} onChange={(v) => update('length', v)} />
-          <Input label="Hmotnost" type="number" placeholder="2345" suffix="g" value={String(examination.weight)} onChange={(e) => update('weight', e.target.value)} />
-          <MeasurementInput label="Obvod hlavy" value={String(examination.headCircumference)} onChange={(v) => update('headCircumference', v)} placeholder="375" />
-          <ImageUpload label="Aktuální fotografie" value={examination.image as string | null} onChange={(v) => update('image', v)} />
+          <MeasurementInput label={t.examLength} value={String(examination.length)} onChange={(v) => update('length', v)} />
+          <Input label={t.examWeight} type="number" placeholder="2345" suffix="g" value={String(examination.weight)} onChange={(e) => update('weight', e.target.value)} />
+          <MeasurementInput label={t.examHeadCirc} value={String(examination.headCircumference)} onChange={(v) => update('headCircumference', v)} placeholder="375" />
+          <ImageUpload label={t.examPhoto} value={examination.image as string | null} onChange={(v) => update('image', v)} />
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="white" onClick={() => navigate(`/patients/detail/${patientId}`)}>Storno</Button>
-            <Button type="submit" variant="primary">{isEdit ? 'Editovat měření' : 'Přidat měření'}</Button>
+            <Button type="button" variant="white" onClick={() => navigate(`/patients/detail/${patientId}`)}>{t.cancel}</Button>
+            <Button type="submit" variant="primary">{isEdit ? t.editMeasurement : t.addMeasurement}</Button>
           </div>
         </div>
       </Card>

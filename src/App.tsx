@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { DatabaseProvider } from './contexts/DatabaseContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
@@ -18,6 +19,7 @@ import { DoctorProfilePage } from './pages/DoctorProfilePage';
 
 export function App() {
   return (
+    <LanguageProvider>
     <DatabaseProvider>
       <AuthProvider>
         <HashRouter>
@@ -43,5 +45,6 @@ export function App() {
         <Toaster position="top-right" />
       </AuthProvider>
     </DatabaseProvider>
+    </LanguageProvider>
   );
 }

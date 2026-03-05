@@ -1,15 +1,18 @@
+import { useT } from '../i18n/LanguageContext';
 import { PageHeader } from '../components/layout/PageHeader';
 import { PatientForm } from '../components/forms/PatientForm';
 
 export function PatientNewPage() {
+  const { t } = useT();
+
   return (
     <div>
       <PageHeader
-        title="Nový pacient"
+        title={t.newPatientTitle}
         breadcrumbs={[
-          { label: 'Monitoring růstu nedonošených dětí', to: '/patients/dashboard' },
-          { label: 'Pacienti', to: '/patients/dashboard' },
-          { label: 'Nový pacient' },
+          { label: t.breadcrumbHome, to: '/patients/dashboard' },
+          { label: t.patients, to: '/patients/dashboard' },
+          { label: t.newPatientTitle },
         ]}
       />
       <div className="p-6">

@@ -2,6 +2,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Users, BarChart3, UserCog, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePerson } from '../../hooks/usePerson';
+import { useT } from '../../i18n/LanguageContext';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { useEffect, useState } from 'react';
 import type { Person } from '../../types/database';
 
@@ -12,6 +14,7 @@ interface SidebarProps {
 export function Sidebar({ collapsed }: SidebarProps) {
   const { signOut } = useAuth();
   const { getCurrentDoctor } = usePerson();
+  const { t } = useT();
   const [doctor, setDoctor] = useState<Person | null>(null);
   const navigate = useNavigate();
 
@@ -44,7 +47,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
       <div className="p-4 border-b border-white/10">
         {!collapsed && (
           <div className="text-center">
-            <h3 className="text-lg font-semibold">Auxology</h3>
+            <h3 className="text-lg font-semibold">{t.appName}</h3>
             {doctorName && <p className="text-xs text-gray-400 mt-1">{doctorName}</p>}
           </div>
         )}
@@ -53,25 +56,30 @@ export function Sidebar({ collapsed }: SidebarProps) {
       <nav className="flex-1 py-4 space-y-1">
         <NavLink to="/patients/dashboard" className={linkClass}>
           <Users size={18} />
-          {!collapsed && <span>Pacienti</span>}
+          {!collapsed && <span>{t.patients}</span>}
         </NavLink>
         <NavLink to="/charts" className={linkClass}>
           <BarChart3 size={18} />
-          {!collapsed && <span>Grafy</span>}
+          {!collapsed && <span>{t.charts}</span>}
         </NavLink>
       </nav>
 
       <div className="border-t border-white/10 py-4 space-y-1">
+        {!collapsed && (
+          <div className="px-4 mb-2">
+            <LanguageSwitcher className="text-gray-400 hover:text-white" />
+          </div>
+        )}
         <NavLink to="/doctor/profile" className={linkClass}>
           <UserCog size={18} />
-          {!collapsed && <span>Profil</span>}
+          {!collapsed && <span>{t.profile}</span>}
         </NavLink>
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors rounded-lg mx-2 w-[calc(100%-1rem)]"
         >
           <LogOut size={18} />
-          {!collapsed && <span>Odhlásit</span>}
+          {!collapsed && <span>{t.logout}</span>}
         </button>
       </div>
     </aside>

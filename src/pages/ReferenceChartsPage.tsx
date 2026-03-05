@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Printer } from 'lucide-react';
 import { buildChartData } from '../hooks/useChartData';
+import { useT } from '../i18n/LanguageContext';
 import { GrowthChart } from '../components/charts/GrowthChart';
 import { PageHeader } from '../components/layout/PageHeader';
 import { Card } from '../components/ui/Card';
@@ -8,21 +9,22 @@ import { Button } from '../components/ui/Button';
 import type { Gender, WeightCategory } from '../types/statistical';
 
 interface TabConfig {
-  label: string;
+  labelKey: 'refChartBoysUnder' | 'refChartGirlsUnder' | 'refChartBoysAbove' | 'refChartGirlsAbove';
   gender: Gender;
   weightCategory: WeightCategory;
 }
 
-const tabs: TabConfig[] = [
-  { label: 'Chlapci pod 1500 g', gender: 'male', weightCategory: 'under' },
-  { label: 'Dívky pod 1500 g', gender: 'female', weightCategory: 'under' },
-  { label: 'Chlapci nad 1500 g', gender: 'male', weightCategory: 'above' },
-  { label: 'Dívky nad 1500 g', gender: 'female', weightCategory: 'above' },
+const tabConfigs: TabConfig[] = [
+  { labelKey: 'refChartBoysUnder', gender: 'male', weightCategory: 'under' },
+  { labelKey: 'refChartGirlsUnder', gender: 'female', weightCategory: 'under' },
+  { labelKey: 'refChartBoysAbove', gender: 'male', weightCategory: 'above' },
+  { labelKey: 'refChartGirlsAbove', gender: 'female', weightCategory: 'above' },
 ];
 
 export function ReferenceChartsPage() {
   const [activeTab, setActiveTab] = useState(0);
-  const config = tabs[activeTab];
+  const { t } = useT();
+  const config = tabConfigs[activeTab];
 
   const charts = useMemo(() => ({
     length: buildChartData(config.gender, config.weightCategory, 'length'),
@@ -36,19 +38,19 @@ export function ReferenceChartsPage() {
   return (
     <div>
       <PageHeader
-        title="Grafy"
+        title={t.charts}
         breadcrumbs={[
-          { label: 'Monitoring růstu nedonošených dětí', to: '/patients/dashboard' },
-          { label: 'Grafy' },
+          { label: t.breadcrumbHome, to: '/patients/dashboard' },
+          { label: t.charts },
         ]}
         actions={
-          <Button onClick={() => window.print()}><Printer size={14} /> Tisk</Button>
+          <Button onClick={() => window.print()}><Printer size={14} /> {t.print}</Button>
         }
       />
 
       <div className="p-6">
         <div className="flex gap-1 mb-6 border-b border-gray-200">
-          {tabs.map((tab, i) => (
+          {tabConfigs.map((tab, i) => (
             <button
               key={i}
               onClick={() => setActiveTab(i)}
@@ -58,22 +60,22 @@ export function ReferenceChartsPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              {tab.label}
+              {t[tab.labelKey]}
             </button>
           ))}
         </div>
 
         <div className="space-y-6">
-          <Card title="Graf tělesné délky">
+          <Card title={t.refChartLength}>
             <GrowthChart data={charts.length} title="" height={700} showLegend genderColor={genderColor} />
           </Card>
-          <Card title="Graf tělesné hmotnosti">
+          <Card title={t.refChartWeight}>
             <GrowthChart data={charts.weight} title="" height={700} showLegend genderColor={genderColor} />
           </Card>
-          <Card title="Graf tělesné hmotnosti k délce">
+          <Card title={t.refChartWeightForLength}>
             <GrowthChart data={charts.weightForLength} title="" height={700} showLegend genderColor={genderColor} />
           </Card>
-          <Card title="Graf obvodu hlavy">
+          <Card title={t.refChartHeadCirc}>
             <GrowthChart data={charts.headCircumference} title="" height={700} showLegend genderColor={genderColor} />
           </Card>
         </div>

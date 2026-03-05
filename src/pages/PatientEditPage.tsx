@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePatients } from '../hooks/usePatients';
+import { useT } from '../i18n/LanguageContext';
 import { PageHeader } from '../components/layout/PageHeader';
 import { PatientForm } from '../components/forms/PatientForm';
 import { Spinner } from '../components/ui/Spinner';
@@ -12,6 +13,7 @@ import type { PatientDetail } from '../types/database';
 export function PatientEditPage() {
   const { id } = useParams<{ id: string }>();
   const { getDetail } = usePatients();
+  const { t } = useT();
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<PatientDetail | null>(null);
 
@@ -24,7 +26,7 @@ export function PatientEditPage() {
   }, [id, getDetail]);
 
   if (loading) return <Spinner />;
-  if (!detail) return <div className="p-6">Pacient nenalezen.</div>;
+  if (!detail) return <div className="p-6">{t.patientNotFound}</div>;
 
   const patient: PatientFormData = {
     id: detail.Patient.id,
@@ -77,10 +79,10 @@ export function PatientEditPage() {
   return (
     <div>
       <PageHeader
-        title={`Editace pacienta ${detail.Person.firstName} ${detail.Person.lastName}`}
+        title={t.editPatientTitle(`${detail.Person.firstName} ${detail.Person.lastName}`)}
         breadcrumbs={[
-          { label: 'Monitoring růstu nedonošených dětí', to: '/patients/dashboard' },
-          { label: 'Pacienti', to: '/patients/dashboard' },
+          { label: t.breadcrumbHome, to: '/patients/dashboard' },
+          { label: t.patients, to: '/patients/dashboard' },
           { label: `${detail.Person.firstName} ${detail.Person.lastName}` },
         ]}
       />

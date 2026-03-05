@@ -1,4 +1,5 @@
 import { GrowthChart } from './GrowthChart';
+import { useT } from '../../i18n/LanguageContext';
 import type { ChartDataPoint } from '../../hooks/useChartData';
 
 interface GrowthChartGridProps {
@@ -26,15 +27,16 @@ export function GrowthChartGrid({
   patientName,
   onZoom,
 }: GrowthChartGridProps) {
-  const suffix = `, ${genderName} s porodní hmotností ${weightCategoryName} 1500 g`;
+  const { t } = useT();
+  const suffix = t.chartSuffix(genderName, weightCategoryName);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <GrowthChart
         data={lengthData}
-        title={`Tělesná délka${suffix}`}
-        xLabel="Korigovaný věk"
-        yLabel="Tělesná délka [cm]"
+        title={`${t.chartLength}${suffix}`}
+        xLabel={t.chartCorrectedAge}
+        yLabel={t.chartLengthUnit}
         genderColor={genderColor}
         patientName={patientName}
         yMin={35}
@@ -42,27 +44,27 @@ export function GrowthChartGrid({
       />
       <GrowthChart
         data={weightData}
-        title={`Tělesná hmotnost${suffix}`}
-        xLabel="Korigovaný věk"
-        yLabel="Hmotnost [g]"
+        title={`${t.chartWeight}${suffix}`}
+        xLabel={t.chartCorrectedAge}
+        yLabel={t.chartWeightUnit}
         genderColor={genderColor}
         patientName={patientName}
         onClick={onZoom ? () => onZoom('weight') : undefined}
       />
       <GrowthChart
         data={weightForLengthData}
-        title={`Hmotnost k délce${suffix}`}
-        xLabel="Tělesná délka [cm]"
-        yLabel="Hmotnost [g]"
+        title={`${t.chartWeightForLength}${suffix}`}
+        xLabel={t.chartLengthUnit}
+        yLabel={t.chartWeightUnit}
         genderColor={genderColor}
         patientName={patientName}
         onClick={onZoom ? () => onZoom('weightForLength') : undefined}
       />
       <GrowthChart
         data={headCircumferenceData}
-        title={`Obvod hlavy${suffix}`}
-        xLabel="Korigovaný věk"
-        yLabel="Obvod hlavy [cm]"
+        title={`${t.chartHeadCirc}${suffix}`}
+        xLabel={t.chartCorrectedAge}
+        yLabel={t.chartHeadCircUnit}
         genderColor={genderColor}
         patientName={patientName}
         onClick={onZoom ? () => onZoom('headCircumference') : undefined}

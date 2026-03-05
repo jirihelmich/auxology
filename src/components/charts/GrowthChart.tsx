@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useT } from '../../i18n/LanguageContext';
 import type { ChartDataPoint } from '../../hooks/useChartData';
 
 interface GrowthChartProps {
@@ -26,6 +27,8 @@ export function GrowthChart({
   yMin,
   onClick,
 }: GrowthChartProps) {
+  const { t } = useT();
+
   return (
     <div className="relative" onClick={onClick} style={onClick ? { cursor: 'pointer' } : undefined}>
       <h6 className="text-sm font-semibold text-gray-700 mb-2 text-center">{title}</h6>
@@ -48,18 +51,18 @@ export function GrowthChart({
             formatter={(value: number, name: string) => {
               const unit = yLabel?.match(/\[(.+)\]/)?.[1] || '';
               const labels: Record<string, string> = {
-                p2: '2. percentil',
-                p5: '5. percentil',
-                p50: '50. percentil',
-                p95: '95. percentil',
-                p98: '98. percentil',
-                Pacient: patientName || 'Pacient',
+                p2: t.chartPercentile2,
+                p5: t.chartPercentile5,
+                p50: t.chartPercentile50,
+                p95: t.chartPercentile95,
+                p98: t.chartPercentile98,
+                Pacient: patientName || t.patient,
               };
               return [`${value} ${unit}`, labels[name] || name];
             }}
             labelFormatter={(label: number) => {
               const xUnit = xLabel?.match(/\[(.+)\]/)?.[1];
-              return xUnit ? `${label} ${xUnit}` : `${label}. týden`;
+              return xUnit ? `${label} ${xUnit}` : t.chartWeekSuffix(label);
             }}
           />
           {showLegend && (
@@ -68,19 +71,19 @@ export function GrowthChart({
                 <div className="flex items-center justify-center gap-6 text-xs text-gray-700 mt-2">
                   <span className="flex items-center gap-1.5">
                     <svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#000" strokeWidth="1" /></svg>
-                    2./98. percentil
+                    {t.chartLegend298}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#000" strokeWidth="1" strokeDasharray="4 4" /></svg>
-                    5./95. percentil
+                    {t.chartLegend595}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#000" strokeWidth="1" strokeDasharray="1 2" /></svg>
-                    50. percentil
+                    {t.chartLegend50}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke={genderColor} strokeWidth="2" /><circle cx="15" cy="5" r="3" fill={genderColor} /></svg>
-                    {patientName || 'Pacient'}
+                    {patientName || t.patient}
                   </span>
                 </div>
               )}

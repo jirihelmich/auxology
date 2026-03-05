@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePatients } from '../hooks/usePatients';
+import { useT } from '../i18n/LanguageContext';
 import { PageHeader } from '../components/layout/PageHeader';
 import { formatBirthNumber } from '../utils/birth-number';
 import { birthDateFromNumber } from '../utils/age';
@@ -8,6 +9,7 @@ import type { PatientWithPerson } from '../types/database';
 
 export function PatientListPage() {
   const { all } = usePatients();
+  const { t } = useT();
   const [patients, setPatients] = useState<PatientWithPerson[]>([]);
 
   useEffect(() => {
@@ -17,13 +19,13 @@ export function PatientListPage() {
   return (
     <div>
       <PageHeader
-        title="Seznam pacientů"
+        title={t.patientListTitle}
         breadcrumbs={[
-          { label: 'Monitoring růstu nedonošených dětí', to: '/patients/dashboard' },
-          { label: 'Pacienti', to: '/patients/dashboard' },
-          { label: 'Seznam' },
+          { label: t.breadcrumbHome, to: '/patients/dashboard' },
+          { label: t.patients, to: '/patients/dashboard' },
+          { label: t.patientListBreadcrumb },
         ]}
-        actions={<span className="text-sm text-gray-500">Celkem evidováno pacientů: {patients.length}.</span>}
+        actions={<span className="text-sm text-gray-500">{t.patientListTotal(patients.length)}</span>}
       />
 
       <div className="p-6">
@@ -41,7 +43,7 @@ export function PatientListPage() {
               <p className="text-sm text-gray-500">
                 {birthDateFromNumber(p.Person.birthNumber || '')} ({formatBirthNumber(p.Person.birthNumber || '')})
               </p>
-              <p className="text-sm text-gray-500">{p.Patient.birthWeek}. týden</p>
+              <p className="text-sm text-gray-500">{p.Patient.birthWeek}. {t.patientListWeek}</p>
             </Link>
           ))}
         </div>

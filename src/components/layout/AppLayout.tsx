@@ -3,9 +3,11 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
 import { useIdleLogout } from '../../hooks/useIdleLogout';
+import { useT } from '../../i18n/LanguageContext';
 
 export function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const { t } = useT();
   useIdleLogout();
 
   return (
@@ -21,7 +23,7 @@ export function AppLayout() {
           <Outlet />
         </main>
         <footer className="text-center text-xs text-gray-400 py-4 border-t border-gray-200 mt-8 hidden-print">
-          <p>Podpořeno grantem z Norska. &copy; 2016–2026 RNDr. Jiří Helmich</p>
+          <p>{t.footerText}</p>
         </footer>
       </div>
     </div>

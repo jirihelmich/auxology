@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { X } from 'lucide-react';
 import { Button } from './Button';
+import { useT } from '../../i18n/LanguageContext';
 
 interface ModalProps {
   open: boolean;
@@ -12,7 +13,9 @@ interface ModalProps {
   confirmVariant?: 'primary' | 'danger';
 }
 
-export function Modal({ open, onClose, onConfirm, title, children, confirmLabel = 'Potvrdit', confirmVariant = 'danger' }: ModalProps) {
+export function Modal({ open, onClose, onConfirm, title, children, confirmLabel, confirmVariant = 'danger' }: ModalProps) {
+  const { t } = useT();
+
   if (!open) return null;
 
   return (
@@ -24,8 +27,8 @@ export function Modal({ open, onClose, onConfirm, title, children, confirmLabel 
         </div>
         <div className="px-5 py-4 text-sm text-gray-600">{children}</div>
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-gray-200">
-          <Button variant="white" onClick={onClose}>Storno</Button>
-          <Button variant={confirmVariant} onClick={onConfirm}>{confirmLabel}</Button>
+          <Button variant="white" onClick={onClose}>{t.cancel}</Button>
+          <Button variant={confirmVariant} onClick={onConfirm}>{confirmLabel || t.confirm}</Button>
         </div>
       </div>
     </div>
