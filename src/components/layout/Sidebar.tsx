@@ -1,9 +1,8 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Users, BarChart3, UserCog, LogOut } from 'lucide-react';
+import { Users, BarChart3, UserCog, LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePerson } from '../../hooks/usePerson';
 import { useT } from '../../i18n/LanguageContext';
-import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { useEffect, useState } from 'react';
 import type { Person } from '../../types/database';
 
@@ -14,7 +13,7 @@ interface SidebarProps {
 export function Sidebar({ collapsed }: SidebarProps) {
   const { signOut } = useAuth();
   const { getCurrentDoctor } = usePerson();
-  const { t } = useT();
+  const { t, lang, setLang } = useT();
   const [doctor, setDoctor] = useState<Person | null>(null);
   const navigate = useNavigate();
 
@@ -65,11 +64,6 @@ export function Sidebar({ collapsed }: SidebarProps) {
       </nav>
 
       <div className="border-t border-white/10 py-4 space-y-1">
-        {!collapsed && (
-          <div className="px-4 mb-2">
-            <LanguageSwitcher className="text-gray-400 hover:text-white" />
-          </div>
-        )}
         <NavLink to="/doctor/profile" className={linkClass}>
           <UserCog size={18} />
           {!collapsed && <span>{t.profile}</span>}
@@ -80,6 +74,14 @@ export function Sidebar({ collapsed }: SidebarProps) {
         >
           <LogOut size={18} />
           {!collapsed && <span>{t.logout}</span>}
+        </button>
+        <button
+          onClick={() => setLang(lang === 'cs' ? 'en' : 'cs')}
+          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors rounded-lg mx-2 w-[calc(100%-1rem)]"
+          title={lang === 'cs' ? 'Switch to English' : 'Přepnout do češtiny'}
+        >
+          <Globe size={18} />
+          {!collapsed && <span>{lang === 'cs' ? 'English' : 'Čeština'}</span>}
         </button>
       </div>
     </aside>

@@ -29,8 +29,9 @@ export function RegisterPage() {
       await create(username, password);
       toast.success(t.registerSuccess);
       navigate('/login');
-    } catch (err) {
-      if (err instanceof Error && err.message === 'USERNAME_EXISTS') {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.includes('USERNAME_EXISTS')) {
         toast.error(t.registerUsernameTaken);
       } else {
         console.error('User creation failed:', err);
