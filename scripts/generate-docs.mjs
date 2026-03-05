@@ -1,0 +1,1024 @@
+import { _electron as electron } from 'playwright';
+import { writeFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
+const screenshotDir = path.join(root, 'docs', 'screenshots');
+
+const TEST_USER = 'docs-test-user-' + Date.now();
+const TEST_PASS = 'docs-test-pass-123';
+
+// Born Apr 1, 2025 at 30 weeks GA — birth number 250401/0003 (valid mod-11 checksum)
+// Expected due date: Jun 10, 2025 (10 weeks later)
+const SAMPLE_PATIENT = {
+  birthNumber: '250401/0003',
+  gender: 'male',
+  birthWeight: '1200',
+  birthWeek: '30',
+  expectedBirthDate: '10. 6. 2025',
+  firstname: 'Jan',
+  lastname: 'Novák',
+};
+
+async function screenshot(page, name, description) {
+  const filePath = path.join(screenshotDir, `${name}.png`);
+  await page.screenshot({ path: filePath });
+  console.log(`  Screenshot: ${name}`);
+  return { name, description, file: `screenshots/${name}.png` };
+}
+
+async function navigateTo(window, hash) {
+  await window.evaluate((h) => { window.location.hash = h; }, hash);
+  await window.waitForTimeout(1000);
+}
+
+async function main() {
+  console.log('Launching Electron app...');
+  const electronApp = await electron.launch({ args: [path.join(root, 'main.js')] });
+  const window = await electronApp.firstWindow();
+  await window.waitForLoadState('domcontentloaded');
+
+  await electronApp.evaluate(({ BrowserWindow }) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    win.unmaximize();
+    win.setSize(1440, 900);
+    win.center();
+  });
+  await window.waitForTimeout(2000);
+
+  const s = {};
+
+  // Login (Czech)
+  console.log('Capturing login page (Czech)...');
+  s.loginCs = await screenshot(window, '01-login-cs', 'Login page in Czech');
+
+  // Switch to English
+  console.log('Switching to English...');
+  const langButton = window.locator('button', { hasText: 'EN' });
+  if (await langButton.count() > 0) {
+    await langButton.first().click();
+    await window.waitForTimeout(300);
+  }
+  s.loginEn = await screenshot(window, '02-login-en', 'Login page in English');
+
+  // Register
+  console.log('Navigating to register page...');
+  await navigateTo(window, '#/register');
+  s.register = await screenshot(window, '03-register', 'Account registration');
+
+  // Create account & login
+  console.log('Creating test account...');
+  await window.fill('input[type="text"]', TEST_USER);
+  await window.fill('input[type="password"]', TEST_PASS);
+  await window.click('button[type="submit"]');
+  await window.waitForTimeout(1500);
+
+  console.log('Logging in...');
+  await window.fill('input[type="text"]', TEST_USER);
+  await window.fill('input[type="password"]', TEST_PASS);
+  await window.click('button[type="submit"]');
+  await window.waitForTimeout(2000);
+
+  // Dashboard (empty)
+  console.log('Capturing dashboard...');
+  s.dashboard = await screenshot(window, '04-dashboard', 'Patient dashboard');
+
+  // New patient form (empty)
+  console.log('Navigating to new patient form...');
+  await navigateTo(window, '#/patients/new');
+  s.newPatient = await screenshot(window, '05-new-patient', 'New patient form');
+
+  // Fill patient form
+  console.log('Creating a sample patient...');
+  await window.fill('input[placeholder="260212/2457"]', SAMPLE_PATIENT.birthNumber);
+  await window.fill('input[placeholder="17. 3. 2016"]', SAMPLE_PATIENT.expectedBirthDate);
+  await window.locator('select').first().selectOption(SAMPLE_PATIENT.gender);
+  await window.locator('input[type="number"][max="2500"]').fill(SAMPLE_PATIENT.birthWeight);
+  await window.locator('input[type="number"][max="37"]').fill(SAMPLE_PATIENT.birthWeek);
+  await window.locator('input[placeholder="Jan"]').first().fill(SAMPLE_PATIENT.firstname);
+  await window.locator('input[placeholder="Novák"]').first().fill(SAMPLE_PATIENT.lastname);
+  s.newPatientFilled = await screenshot(window, '06-new-patient-filled', 'Filled patient form');
+
+  // Submit
+  await window.locator('button[type="submit"]').click();
+  await window.waitForTimeout(2000);
+
+  // Patient detail
+  console.log('Capturing patient detail...');
+  s.patientDetail = await screenshot(window, '07-patient-detail', 'Patient detail');
+
+  // Add multiple examinations to build realistic growth history
+  // Baby born Apr 1, 2025 at 30 weeks with 1200g, ~11 months of follow-up
+  // Examinations from April 2025 through early March 2026
+  // All dates in the past (today is March 5, 2026)
+  // Realistic catch-up growth: head circ ~40th–60th P, weight/length 10th→35th P
+  const examinations = [
+    { date: '8. 4. 2025 9:00',    length: '37.0', weight: '1150', head: '27.0' },
+    { date: '22. 4. 2025 10:00',  length: '39.0', weight: '1400', head: '29.0' },
+    { date: '6. 5. 2025 9:00',    length: '41.5', weight: '1700', head: '31.0' },
+    { date: '20. 5. 2025 10:00',  length: '44.0', weight: '2050', head: '33.0' },
+    { date: '3. 6. 2025 9:00',    length: '46.0', weight: '2400', head: '34.5' },
+    { date: '17. 6. 2025 10:00',  length: '48.0', weight: '2800', head: '35.5' },
+    { date: '8. 7. 2025 9:00',    length: '51.0', weight: '3400', head: '37.0' },
+    { date: '5. 8. 2025 10:00',   length: '54.0', weight: '4100', head: '38.5' },
+    { date: '2. 9. 2025 9:00',    length: '57.0', weight: '4800', head: '39.5' },
+    { date: '30. 9. 2025 10:00',  length: '59.5', weight: '5400', head: '40.5' },
+    { date: '4. 11. 2025 9:00',   length: '62.5', weight: '6100', head: '41.5' },
+    { date: '9. 12. 2025 10:00',  length: '65.0', weight: '6800', head: '42.5' },
+    { date: '20. 1. 2026 9:00',   length: '67.5', weight: '7500', head: '43.5' },
+    { date: '3. 3. 2026 10:00',   length: '70.0', weight: '7800', head: '44.0' },
+  ];
+
+  // Add first exam with screenshot
+  console.log(`Adding ${examinations.length} examinations...`);
+  const firstExam = examinations[0];
+  const newExamBtn = window.locator('a', { hasText: /New examination|Nové vyšetření/ });
+  if (await newExamBtn.count() > 0) await newExamBtn.first().click();
+  await window.waitForTimeout(1000);
+
+  await window.locator('input').first().fill(firstExam.date);
+  const lengthInput = window.locator('input[placeholder="520"]').first();
+  if (await lengthInput.count() > 0) await lengthInput.fill(firstExam.length);
+  const examWeightInput = window.locator('input[placeholder="2345"]');
+  if (await examWeightInput.count() > 0) await examWeightInput.fill(firstExam.weight);
+  const headInput = window.locator('input[placeholder="375"]').first();
+  if (await headInput.count() > 0) await headInput.fill(firstExam.head);
+
+  s.examFilled = await screenshot(window, '08-examination-filled', 'Examination form with measurements');
+
+  await window.locator('button[type="submit"]').click();
+  await window.waitForTimeout(1500);
+
+  // Add remaining examinations
+  for (let i = 1; i < examinations.length; i++) {
+    const exam = examinations[i];
+    console.log(`  Exam ${i + 1}/${examinations.length}: ${exam.date}`);
+    const btn = window.locator('a', { hasText: /New examination|Nové vyšetření/ });
+    if (await btn.count() > 0) await btn.first().click();
+    await window.waitForTimeout(800);
+
+    await window.locator('input').first().fill(exam.date);
+    const li = window.locator('input[placeholder="520"]').first();
+    if (await li.count() > 0) await li.fill(exam.length);
+    const wi = window.locator('input[placeholder="2345"]');
+    if (await wi.count() > 0) await wi.fill(exam.weight);
+    const hi = window.locator('input[placeholder="375"]').first();
+    if (await hi.count() > 0) await hi.fill(exam.head);
+
+    await window.locator('button[type="submit"]').click();
+    await window.waitForTimeout(1500);
+  }
+
+  // Patient with growth data
+  console.log('Capturing patient with growth data...');
+  s.patientGrowth = await screenshot(window, '09-patient-growth', 'Patient overview with examination history');
+
+  // Growth charts
+  await window.evaluate(() => window.scrollBy(0, 600));
+  await window.waitForTimeout(500);
+  s.growthCharts = await screenshot(window, '10-growth-charts', 'Growth charts with percentile curves');
+
+  // Tabulated data
+  await window.evaluate(() => window.scrollBy(0, 600));
+  await window.waitForTimeout(500);
+  s.growthTable = await screenshot(window, '11-growth-table', 'Tabulated data with percentiles and Z-scores');
+
+  // Dashboard with preview
+  console.log('Capturing dashboard with patient preview...');
+  await navigateTo(window, '#/patients/dashboard');
+  const infoBtn = window.locator('button').filter({ has: window.locator('svg') }).last();
+  if (await infoBtn.count() > 0) {
+    await infoBtn.click();
+    await window.waitForTimeout(500);
+  }
+  s.dashboardPreview = await screenshot(window, '12-dashboard-preview', 'Dashboard with patient preview');
+
+  // Patient list
+  console.log('Navigating to patient list...');
+  await navigateTo(window, '#/patients/list');
+  s.patientList = await screenshot(window, '13-patient-list', 'Patient list');
+
+  // Reference charts
+  console.log('Navigating to reference charts...');
+  await navigateTo(window, '#/charts');
+  await window.waitForTimeout(500);
+  s.refCharts = await screenshot(window, '14-ref-charts', 'Reference growth charts');
+
+  // Doctor profile
+  console.log('Navigating to doctor profile...');
+  await navigateTo(window, '#/doctor/profile');
+  s.doctorProfile = await screenshot(window, '15-doctor-profile', 'Doctor profile');
+
+  // --- Czech screenshots ---
+  console.log('\nSwitching to Czech for CZ screenshots...');
+  const csLangBtn = window.locator('button', { hasText: 'Čeština' });
+  if (await csLangBtn.count() > 0) {
+    await csLangBtn.first().click();
+    await window.waitForTimeout(500);
+  }
+
+  const cs = {};
+
+  // Czech doctor profile (already on page)
+  cs.doctorProfile = await screenshot(window, 'cs-15-doctor-profile', 'Profil lékaře');
+
+  // Czech dashboard
+  console.log('Capturing Czech dashboard...');
+  await navigateTo(window, '#/patients/dashboard');
+  const csInfoBtn = window.locator('button').filter({ has: window.locator('svg') }).last();
+  if (await csInfoBtn.count() > 0) {
+    await csInfoBtn.click();
+    await window.waitForTimeout(500);
+  }
+  cs.dashboardPreview = await screenshot(window, 'cs-12-dashboard-preview', 'Přehled pacientů s náhledem');
+
+  // Czech patient detail — navigate to patient
+  console.log('Capturing Czech patient detail...');
+  await navigateTo(window, '#/patients/list');
+  const patientLink = window.locator('a', { hasText: SAMPLE_PATIENT.lastname });
+  if (await patientLink.count() > 0) {
+    await patientLink.first().click();
+    await window.waitForTimeout(1500);
+  }
+
+  cs.patientGrowth = await screenshot(window, 'cs-09-patient-growth', 'Přehled pacienta s historií vyšetření');
+
+  await window.evaluate(() => window.scrollBy(0, 600));
+  await window.waitForTimeout(500);
+  cs.growthCharts = await screenshot(window, 'cs-10-growth-charts', 'Růstové grafy s percentilovými křivkami');
+
+  await window.evaluate(() => window.scrollBy(0, 600));
+  await window.waitForTimeout(500);
+  cs.growthTable = await screenshot(window, 'cs-11-growth-table', 'Tabulková data s percentily a Z-skóre');
+
+  // Czech new examination form
+  console.log('Capturing Czech examination form...');
+  await window.evaluate(() => window.scrollTo(0, 0));
+  await window.waitForTimeout(300);
+  const csNewExamBtn = window.locator('a', { hasText: /Nové vyšetření/ });
+  if (await csNewExamBtn.count() > 0) {
+    await csNewExamBtn.first().click();
+    await window.waitForTimeout(1000);
+  }
+  await window.locator('input').first().fill('15. 3. 2026 9:00');
+  const csLi = window.locator('input[placeholder="520"]').first();
+  if (await csLi.count() > 0) await csLi.fill('71.5');
+  const csWi = window.locator('input[placeholder="2345"]');
+  if (await csWi.count() > 0) await csWi.fill('8100');
+  const csHi = window.locator('input[placeholder="375"]').first();
+  if (await csHi.count() > 0) await csHi.fill('44.5');
+  cs.examFilled = await screenshot(window, 'cs-08-examination-filled', 'Formulář vyšetření s naměřenými hodnotami');
+
+  // Czech reference charts
+  console.log('Capturing Czech reference charts...');
+  await navigateTo(window, '#/charts');
+  await window.waitForTimeout(500);
+  cs.refCharts = await screenshot(window, 'cs-14-ref-charts', 'Referenční růstové grafy');
+
+  // Czech new patient form
+  console.log('Capturing Czech new patient form...');
+  await navigateTo(window, '#/patients/new');
+  cs.newPatientForm = await screenshot(window, 'cs-05-new-patient', 'Formulář nového pacienta');
+
+  console.log('Closing app...');
+  await electronApp.close();
+
+  console.log('\nGenerating documentation...');
+  generateMarkdown(s);
+  generateHTML(s);
+  generateCzechMarkdown(cs, s);
+  generateCzechHTML(cs, s);
+  generateIndexHTML();
+  console.log('Done! Files written to docs/');
+}
+
+function generateMarkdown(s) {
+  const img = (shot) => shot ? `\n![${shot.description}](${shot.file})\n` : '';
+
+  const md = `# Auxology — User Guide
+
+Auxology is a desktop application designed for neonatologists and paediatric clinicians who need to monitor the growth of prematurely born children. The application is built around Czech reference auxological data — percentile growth charts derived from a study of 1,781 premature children (5,676 examinations) at the Centre of Comprehensive Care, KDDL VFN Prague, between 2001 and 2015.
+
+All data is stored locally on your computer. There is no cloud component — the application works entirely offline. It runs on both macOS and Windows.
+
+The interface is available in **Czech** and **English**. You can switch between the two at any time, and your preference is remembered across sessions.
+
+---
+
+## Getting Started
+
+### Creating an Account
+
+When you launch Auxology for the first time, you are presented with the login screen. Since the application stores data locally, your account exists only on your machine — it is not shared with anyone.
+
+Click **Create account** to set up a username and password. Once registered, you are redirected back to the login screen where you can sign in with your new credentials.
+${img(s.loginCs)}
+To switch the interface language before logging in, use the **EN/CZ** toggle in the top-right corner of the login page. Inside the application, the same toggle is available at the bottom of the sidebar navigation.
+${img(s.loginEn)}
+### The Dashboard
+
+After signing in, you land on the patient dashboard. This is the central screen of the application — from here you can search for existing patients, create new ones, export your data, or navigate to reference charts and your profile via the sidebar.
+
+The search bar accepts patient surnames and birth numbers. Results appear in a table that shows each patient's ID, name, gender, birth number, date of birth, gestational age at birth, and birth weight. Clicking a patient's name takes you to their detail page. Clicking the info icon on the right opens a preview panel with a timeline of examinations and quick-action links.
+${img(s.dashboardPreview)}
+---
+
+## Working with Patients
+
+### Registering a New Patient
+
+Click **New patient** on the dashboard to open the registration form. Four fields are required:
+
+1. **Birth number** (rodné číslo) — the Czech national identification number. The application automatically computes the date of birth and validates the checksum. For female patients, the month is encoded with +50 as per the Czech standard.
+2. **Gender** — Girl or Boy.
+3. **Birth weight** — in grams. The maximum is 2500 g (the threshold for prematurity).
+4. **Gestational week at birth** — the week of gestation when the child was born (maximum 37).
+
+You can optionally provide the child's name, planned due date, birth length, head circumference at birth, and free-text notes. The form also includes sections for mother and father details — personal data, anthropometric measurements, contact information, and address.
+${img(s.newPatientFilled)}
+After saving, you are taken directly to the new patient's detail page.
+
+### The Patient Detail Page
+
+The patient detail page is the main workspace for a single child. The left column shows a summary card with:
+
+- **Age information** — date of birth (derived from the birth number), calculated and planned due dates, gestational age at birth, current gestational age, corrected age, and calendar age. Corrected age is automatically calculated by subtracting (40 − birth week) weeks from the actual age.
+- **Sparkline charts** — small inline graphs showing the trend of length, weight, and head circumference across all recorded examinations.
+- **Action buttons** — links to add a new examination, edit the patient, or delete the patient and all associated data.
+
+The right column shows the **examination cards** — each card displays the date, corrected age at the time of the examination, body length, weight, head circumference, and any notes. Cards can be edited or deleted individually.
+${img(s.patientGrowth)}
+---
+
+## Tracking Growth Over Time
+
+The core purpose of Auxology is to track how a premature child grows relative to reference data. This is done by recording examinations at each clinical visit and reviewing the resulting charts and statistics.
+
+### Recording an Examination
+
+From the patient detail page, click **New examination**. The form asks for:
+
+- **Examination date and time** — pre-filled with the current date.
+- **Body length** — in centimetres (stored internally in millimetres for precision).
+- **Body weight** — in grams.
+- **Head circumference** — in centimetres.
+- **Notes** — free text for clinical observations.
+- **Photo** — an optional image of the child.
+
+If a previous examination exists, its values are displayed above the input fields for quick reference. If this is the first examination, birth measurements are shown instead.
+${img(s.examFilled)}
+### Growth Charts
+
+Once at least one examination is recorded, the patient detail page shows four growth charts that plot the child's measurements against reference percentile curves. The percentile lines shown are the 2nd, 5th, 50th, 95th, and 98th — computed using the LMS quantile regression method.
+
+The four charts are:
+
+- **Body length** vs. corrected age
+- **Body weight** vs. corrected age
+- **Head circumference** vs. corrected age
+- **Weight for length** (weight plotted against body length rather than age)
+
+The reference curves are selected automatically based on the child's gender and whether their birth weight was above or below 1500 g. The child's own data points are connected by a coloured line (blue for boys, red for girls), making it easy to see at a glance whether growth is following, crossing, or deviating from the expected percentile bands.
+
+Clicking any chart opens it in a full-screen view for closer inspection or discussion with colleagues.
+${img(s.growthCharts)}
+### Tabulated Data
+
+Below the charts, a summary table lists every examination chronologically. For each visit, the table shows:
+
+| Column | Description |
+|---|---|
+| **Date** | When the examination took place |
+| **Corrected age** | Age adjusted for prematurity |
+| **Weight [g]** | Measured body weight |
+| **Weight P** | Weight percentile relative to the reference population |
+| **Weight SDS** | Weight standard deviation score (Z-score) |
+| **Length [cm]** | Measured body length |
+| **Length P / SDS** | Length percentile and Z-score |
+| **Head circ. [cm]** | Measured head circumference |
+| **Head circ. P / SDS** | Head circumference percentile and Z-score |
+| **Weight-for-length P / SDS** | How the child's weight relates to their length |
+
+Percentiles and Z-scores are computed against the appropriate reference dataset (gender × weight category). A Z-score of 0 corresponds to the 50th percentile; values below −2 or above +2 indicate measurements outside the normal range and may warrant clinical attention.
+${img(s.growthTable)}
+---
+
+## Reference Charts
+
+The **Charts** section, accessible from the sidebar, displays the reference percentile curves without any patient data overlaid. This is useful for printing blank charts, for educational purposes, or for comparing against measurements taken outside the application.
+
+Four tabs let you switch between the reference populations:
+
+- Boys with birth weight below 1500 g
+- Girls with birth weight below 1500 g
+- Boys with birth weight above 1500 g
+- Girls with birth weight above 1500 g
+
+Each tab shows full-size charts for body length, body weight, weight-for-length, and head circumference.
+${img(s.refCharts)}
+---
+
+## Doctor Profile
+
+The **Profile** section lets you enter your professional details: title prefix (e.g. RNDr., MUDr.), first name, surname, title suffix (e.g. Ph.D.), and workplace. This information is displayed in the sidebar so you can confirm which account is active.
+${img(s.doctorProfile)}
+---
+
+## Additional Information
+
+### Data and Privacy
+
+All patient data is stored in a local IndexedDB database within your browser/Electron instance. Nothing is transmitted over the network. If you need to transfer data to another machine, use the **Export** function on the dashboard.
+
+### Auto-Logout
+
+For security, the application automatically logs you out after **2 minutes** of inactivity. You will be returned to the login screen and need to sign in again to continue.
+
+### Statistical Background
+
+The reference data is based on a longitudinal study of premature children in the Czech Republic:
+
+| | |
+|---|---|
+| **Sample size** | 1,781 children (846 girls, 935 boys) |
+| **Examinations** | 5,676 total |
+| **Age range** | 37th to 109th week of gestational age |
+| **Institution** | Centre of Comprehensive Care, KDDL VFN Prague |
+| **Period** | 2001–2015 |
+| **Method** | LMS quantile regression |
+| **Percentiles** | 2nd, 5th, 50th, 95th, 98th |
+| **Measures** | Body length, body weight, head circumference, weight-for-length |
+| **Weight categories** | Below 1500 g / above 1500 g at birth |
+`;
+
+  writeFileSync(path.join(root, 'docs', 'USER_GUIDE.md'), md);
+  console.log('  Written: docs/USER_GUIDE.md');
+}
+
+function generateHTML(s) {
+  const img = (shot) => shot ? `
+      <figure>
+        <img src="${shot.file}" alt="${shot.description}" loading="lazy" />
+        <figcaption>${shot.description}</figcaption>
+      </figure>` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auxology — User Guide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; line-height: 1.75; font-size: 16px; }
+    .hero { background: linear-gradient(135deg, #2f4050 0%, #1c84c6 100%); color: white; padding: 5rem 2rem; text-align: center; }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; font-weight: 700; }
+    .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 550px; margin: 0 auto; }
+    .lang-switch { position: absolute; top: 1.5rem; right: 2rem; }
+    .lang-switch a { color: white; text-decoration: none; opacity: 0.8; font-size: 0.9rem; padding: 0.4rem 0.8rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; }
+    .lang-switch a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 2rem; }
+    h2 { color: #2f4050; margin: 3rem 0 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; font-size: 1.5rem; }
+    h3 { color: #1c84c6; margin: 2rem 0 0.75rem; font-size: 1.2rem; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.75rem; margin-bottom: 1.25rem; }
+    li { margin-bottom: 0.5rem; }
+    strong { color: #2f4050; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 3rem 0; }
+    figure { margin: 2rem 0; border: 1px solid #e2e5e9; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    figure img { width: 100%; display: block; }
+    figcaption { padding: 0.6rem 1rem; background: #f8fafc; font-size: 0.85rem; color: #6b7280; text-align: center; border-top: 1px solid #e2e5e9; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { font-weight: 600; color: #2f4050; background: #f8fafc; }
+    .tech table td:first-child { font-weight: 600; white-space: nowrap; width: 180px; color: #2f4050; }
+    footer { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.85rem; border-top: 1px solid #e5e7eb; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+  <div class="hero" style="position: relative;">
+    <div class="lang-switch"><a href="USER_GUIDE_CS.html">Česky</a></div>
+    <h1>Auxology</h1>
+    <p>User Guide</p>
+  </div>
+
+  <div class="container">
+    <p>Auxology is a desktop application designed for neonatologists and paediatric clinicians who need to monitor the growth of prematurely born children. The application is built around Czech reference auxological data — percentile growth charts derived from a study of 1,781 premature children (5,676 examinations) at the Centre of Comprehensive Care, KDDL VFN Prague, between 2001 and 2015.</p>
+
+    <p>All data is stored locally on your computer. There is no cloud component — the application works entirely offline. It runs on both macOS and Windows.</p>
+
+    <p>The interface is available in <strong>Czech</strong> and <strong>English</strong>. You can switch between the two at any time, and your preference is remembered across sessions.</p>
+
+    <hr />
+
+    <h2>Getting Started</h2>
+
+    <h3>Creating an Account</h3>
+
+    <p>When you launch Auxology for the first time, you are presented with the login screen. Since the application stores data locally, your account exists only on your machine — it is not shared with anyone.</p>
+
+    <p>Click <strong>Create account</strong> to set up a username and password. Once registered, you are redirected back to the login screen where you can sign in with your new credentials.</p>
+
+    ${img(s.loginCs)}
+
+    <p>To switch the interface language before logging in, use the <strong>EN/CZ</strong> toggle in the top-right corner of the login page. Inside the application, the same toggle is available at the bottom of the sidebar navigation.</p>
+
+    ${img(s.loginEn)}
+
+    <h3>The Dashboard</h3>
+
+    <p>After signing in, you land on the patient dashboard. This is the central screen of the application — from here you can search for existing patients, create new ones, export your data, or navigate to reference charts and your profile via the sidebar.</p>
+
+    <p>The search bar accepts patient surnames and birth numbers. Results appear in a table that shows each patient's ID, name, gender, birth number, date of birth, gestational age at birth, and birth weight. Clicking a patient's name takes you to their detail page. Clicking the info icon on the right opens a preview panel with a timeline of examinations and quick-action links.</p>
+
+    ${img(s.dashboardPreview)}
+
+    <hr />
+
+    <h2>Working with Patients</h2>
+
+    <h3>Registering a New Patient</h3>
+
+    <p>Click <strong>New patient</strong> on the dashboard to open the registration form. Four fields are required:</p>
+
+    <ol>
+      <li><strong>Birth number</strong> (rodné číslo) — the Czech national identification number. The application automatically computes the date of birth and validates the checksum. For female patients, the month is encoded with +50 as per the Czech standard.</li>
+      <li><strong>Gender</strong> — Girl or Boy.</li>
+      <li><strong>Birth weight</strong> — in grams. The maximum is 2500 g (the threshold for prematurity).</li>
+      <li><strong>Gestational week at birth</strong> — the week of gestation when the child was born (maximum 37).</li>
+    </ol>
+
+    <p>You can optionally provide the child's name, planned due date, birth length, head circumference at birth, and free-text notes. The form also includes sections for mother and father details — personal data, anthropometric measurements, contact information, and address.</p>
+
+    ${img(s.newPatientFilled)}
+
+    <h3>The Patient Detail Page</h3>
+
+    <p>The patient detail page is the main workspace for a single child. The left column shows a summary card with age information — date of birth (derived from the birth number), calculated and planned due dates, gestational age at birth, current gestational age, corrected age, and calendar age. Corrected age is automatically calculated by subtracting (40 − birth week) weeks from the actual age.</p>
+
+    <p>Below the age table, sparkline charts show the trend of length, weight, and head circumference across all recorded examinations. Action buttons let you add a new examination, edit the patient, or delete the patient and all associated data.</p>
+
+    <p>The right column shows the examination cards — each card displays the date, corrected age at the time of the examination, body length, weight, head circumference, and any notes. Cards can be edited or deleted individually.</p>
+
+    ${img(s.patientGrowth)}
+
+    <hr />
+
+    <h2>Tracking Growth Over Time</h2>
+
+    <p>The core purpose of Auxology is to track how a premature child grows relative to reference data. This is done by recording examinations at each clinical visit and reviewing the resulting charts and statistics.</p>
+
+    <h3>Recording an Examination</h3>
+
+    <p>From the patient detail page, click <strong>New examination</strong>. The form asks for the examination date and time (pre-filled with the current moment), body length in centimetres, body weight in grams, head circumference in centimetres, optional notes, and an optional photo of the child.</p>
+
+    <p>If a previous examination exists, its values are displayed above the input fields for quick reference. If this is the first examination, birth measurements are shown instead.</p>
+
+    ${img(s.examFilled)}
+
+    <h3>Growth Charts</h3>
+
+    <p>Once at least one examination is recorded, the patient detail page shows four growth charts that plot the child's measurements against reference percentile curves. The percentile lines shown are the 2nd, 5th, 50th, 95th, and 98th — computed using the LMS quantile regression method.</p>
+
+    <p>The four charts are: body length vs. corrected age, body weight vs. corrected age, head circumference vs. corrected age, and weight for length (weight plotted against body length rather than age).</p>
+
+    <p>The reference curves are selected automatically based on the child's gender and whether their birth weight was above or below 1500 g. The child's own data points are connected by a coloured line (blue for boys, red for girls), making it easy to see at a glance whether growth is following, crossing, or deviating from the expected percentile bands. Clicking any chart opens it in a full-screen view for closer inspection.</p>
+
+    ${img(s.growthCharts)}
+
+    <h3>Tabulated Data</h3>
+
+    <p>Below the charts, a summary table lists every examination chronologically. For each visit, the table shows the date, corrected age, and for each of the three measurements (weight, length, head circumference) both the raw value and the computed <strong>percentile</strong> and <strong>SDS/Z-score</strong>. A separate column shows the weight-for-length percentile and Z-score.</p>
+
+    <p>A Z-score of 0 corresponds to the 50th percentile. Values below −2 or above +2 indicate measurements outside the normal range and may warrant clinical attention. This tabulated view gives clinicians a concise numerical summary to complement the visual growth charts.</p>
+
+    ${img(s.growthTable)}
+
+    <hr />
+
+    <h2>Reference Charts</h2>
+
+    <p>The <strong>Charts</strong> section, accessible from the sidebar, displays the reference percentile curves without any patient data overlaid. This is useful for printing blank charts, for educational purposes, or for comparing against measurements taken outside the application.</p>
+
+    <p>Four tabs let you switch between the reference populations: boys below 1500 g, girls below 1500 g, boys above 1500 g, and girls above 1500 g. Each tab shows full-size charts for body length, body weight, weight-for-length, and head circumference.</p>
+
+    ${img(s.refCharts)}
+
+    <hr />
+
+    <h2>Doctor Profile</h2>
+
+    <p>The <strong>Profile</strong> section lets you enter your professional details: title prefix (e.g. RNDr., MUDr.), first name, surname, title suffix (e.g. Ph.D.), and workplace. This information is displayed in the sidebar so you can confirm which account is active.</p>
+
+    ${img(s.doctorProfile)}
+
+    <hr />
+
+    <h2>Additional Information</h2>
+
+    <h3>Data and Privacy</h3>
+
+    <p>All patient data is stored in a local IndexedDB database within your browser/Electron instance. Nothing is transmitted over the network. If you need to transfer data to another machine, use the <strong>Export</strong> function on the dashboard.</p>
+
+    <h3>Auto-Logout</h3>
+
+    <p>For security, the application automatically logs you out after <strong>2 minutes</strong> of inactivity. You will be returned to the login screen and need to sign in again to continue.</p>
+
+    <h3>Statistical Background</h3>
+
+    <div class="tech">
+      <table>
+        <tr><td>Sample size</td><td>1,781 children (846 girls, 935 boys)</td></tr>
+        <tr><td>Examinations</td><td>5,676 total</td></tr>
+        <tr><td>Age range</td><td>37th to 109th week of gestational age</td></tr>
+        <tr><td>Institution</td><td>Centre of Comprehensive Care, KDDL VFN Prague</td></tr>
+        <tr><td>Period</td><td>2001–2015</td></tr>
+        <tr><td>Method</td><td>LMS quantile regression</td></tr>
+        <tr><td>Percentiles</td><td>2nd, 5th, 50th, 95th, 98th</td></tr>
+        <tr><td>Measures</td><td>Body length, body weight, head circumference, weight-for-length</td></tr>
+        <tr><td>Weight categories</td><td>Below 1500 g / above 1500 g at birth</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2016–2026 RNDr. Jiří Helmich &middot; Supported by a grant from Norway</p>
+  </footer>
+</body>
+</html>`;
+
+  writeFileSync(path.join(root, 'docs', 'USER_GUIDE.html'), html);
+  console.log('  Written: docs/USER_GUIDE.html');
+}
+
+function generateCzechMarkdown(cs, en) {
+  const img = (shot) => shot ? `\n![${shot.description}](${shot.file})\n` : '';
+
+  const md = `# Auxologie — Uživatelská příručka
+
+Auxologie je desktopová aplikace určená pro neonatology a pediatrické lékaře, kteří potřebují sledovat růst předčasně narozených dětí. Aplikace je postavena na českých referenčních auxologických datech — percentilových růstových grafech odvozených ze studie 1 781 nedonošených dětí (5 676 vyšetření) v Centru komplexní péče, KDDL VFN Praha, v období 2001–2015.
+
+Všechna data jsou uložena lokálně ve vašem počítači. Aplikace neobsahuje žádnou cloudovou komponentu — funguje zcela offline. Běží na macOS i Windows.
+
+Rozhraní je dostupné v **češtině** a **angličtině**. Mezi jazyky lze přepínat kdykoli a vaše preference se zapamatuje.
+
+---
+
+## Začínáme
+
+### Vytvoření účtu
+
+Při prvním spuštění aplikace se zobrazí přihlašovací obrazovka. Protože aplikace ukládá data lokálně, váš účet existuje pouze na vašem počítači — není sdílen s nikým.
+
+Klikněte na **Vytvořit účet** pro nastavení uživatelského jména a hesla. Po registraci budete přesměrováni zpět na přihlašovací obrazovku.
+${img(en.loginCs)}
+Pro přepnutí jazyka rozhraní před přihlášením použijte přepínač **EN/CZ** v pravém horním rohu přihlašovací stránky. Uvnitř aplikace je stejný přepínač dostupný v dolní části postranního menu.
+
+### Přehled pacientů
+
+Po přihlášení se zobrazí přehled pacientů. Toto je centrální obrazovka aplikace — odsud můžete vyhledávat existující pacienty, vytvářet nové, exportovat data nebo přejít k referenčním grafům a profilu přes postranní menu.
+
+Vyhledávací pole přijímá příjmení pacientů a rodná čísla. Výsledky se zobrazí v tabulce s ID, jménem, pohlavím, rodným číslem, datem narození, gestačním stářím při narození a porodní hmotností. Kliknutím na jméno pacienta přejdete na jeho detail. Kliknutím na ikonu info se otevře panel náhledu s časovou osou vyšetření.
+${img(cs.dashboardPreview)}
+---
+
+## Práce s pacienty
+
+### Registrace nového pacienta
+
+Klikněte na **Nový pacient** pro otevření registračního formuláře. Čtyři pole jsou povinná:
+
+1. **Rodné číslo** — české národní identifikační číslo. Aplikace automaticky vypočítá datum narození a ověří kontrolní součet. U žen je měsíc kódován s +50 dle českého standardu.
+2. **Pohlaví** — Dívka nebo Chlapec.
+3. **Porodní hmotnost** — v gramech. Maximum je 2500 g (práh nedonošenosti).
+4. **Gestační týden při narození** — týden gestace, kdy se dítě narodilo (maximum 37).
+
+Volitelně můžete zadat jméno dítěte, plánovaný termín porodu, porodní délku, obvod hlavy při narození a poznámky. Formulář obsahuje také oddíly pro údaje o matce a otci.
+${img(cs.newPatientForm)}
+### Detail pacienta
+
+Detail pacienta je hlavní pracovní prostor pro jednotlivé dítě. Levý sloupec zobrazuje souhrnnou kartu s informacemi o věku — datum narození (odvozené z rodného čísla), vypočtený a plánovaný termín porodu, gestační stáří při narození, aktuální gestační stáří, korigovaný věk a kalendářní věk. Korigovaný věk je automaticky vypočten odečtením (40 − týden narození) týdnů od skutečného věku.
+
+Pod tabulkou věku jsou sparkline grafy ukazující trend délky, hmotnosti a obvodu hlavy. Akční tlačítka umožňují přidat nové vyšetření, upravit pacienta nebo smazat pacienta a všechna přidružená data.
+
+Pravý sloupec zobrazuje karty vyšetření — každá karta ukazuje datum, korigovaný věk, délku těla, hmotnost, obvod hlavy a poznámky.
+${img(cs.patientGrowth)}
+---
+
+## Sledování růstu v čase
+
+Hlavním účelem aplikace Auxologie je sledovat, jak předčasně narozené dítě roste ve srovnání s referenčními daty. To se provádí zaznamenáváním vyšetření při každé klinické návštěvě a prohlížením výsledných grafů a statistik.
+
+### Záznam vyšetření
+
+Na stránce detailu pacienta klikněte na **Nové vyšetření**. Formulář požaduje datum a čas vyšetření, délku těla v centimetrech, hmotnost v gramech, obvod hlavy v centimetrech, volitelné poznámky a volitelnou fotografii dítěte.
+
+Pokud existuje předchozí vyšetření, jeho hodnoty se zobrazí nad vstupními poli pro rychlou referenci.
+${img(cs.examFilled)}
+### Růstové grafy
+
+Po zaznamenání alespoň jednoho vyšetření se na stránce detailu pacienta zobrazí čtyři růstové grafy, které vykreslují měření dítěte proti referenčním percentilovým křivkám. Zobrazené percentilové linie jsou 2., 5., 50., 95. a 98. — vypočtené pomocí metody kvantilové regrese LMS.
+
+Čtyři grafy jsou:
+
+- **Délka těla** vs. korigovaný věk
+- **Hmotnost** vs. korigovaný věk
+- **Obvod hlavy** vs. korigovaný věk
+- **Hmotnost k délce** (hmotnost vynesená proti délce těla místo věku)
+
+Referenční křivky jsou vybrány automaticky na základě pohlaví dítěte a zda jeho porodní hmotnost byla nad nebo pod 1500 g. Datové body dítěte jsou spojeny barevnou linií (modrá pro chlapce, červená pro dívky).
+${img(cs.growthCharts)}
+### Tabulková data
+
+Pod grafy je souhrnná tabulka se všemi vyšetřeními v chronologickém pořadí. Pro každou návštěvu tabulka ukazuje datum, korigovaný věk a pro každé ze tří měření (hmotnost, délka, obvod hlavy) jak naměřenou hodnotu, tak vypočtený **percentil** a **SDS/Z-skóre**. Samostatný sloupec ukazuje percentil a Z-skóre hmotnosti k délce.
+
+Z-skóre 0 odpovídá 50. percentilu. Hodnoty pod −2 nebo nad +2 indikují měření mimo normální rozsah a mohou vyžadovat klinickou pozornost.
+${img(cs.growthTable)}
+---
+
+## Referenční grafy
+
+Sekce **Grafy**, přístupná z postranního menu, zobrazuje referenční percentilové křivky bez překrytí daty pacienta. To je užitečné pro tisk prázdných grafů, pro vzdělávací účely nebo pro porovnání s měřeními provedenými mimo aplikaci.
+
+Čtyři záložky umožňují přepínat mezi referenčními populacemi:
+
+- Chlapci s porodní hmotností pod 1500 g
+- Dívky s porodní hmotností pod 1500 g
+- Chlapci s porodní hmotností nad 1500 g
+- Dívky s porodní hmotností nad 1500 g
+${img(cs.refCharts)}
+---
+
+## Profil lékaře
+
+Sekce **Profil** umožňuje zadat vaše profesní údaje: titul před jménem (např. RNDr., MUDr.), jméno, příjmení, titul za jménem (např. Ph.D.) a pracoviště. Tyto informace se zobrazují v postranním menu.
+${img(cs.doctorProfile)}
+---
+
+## Další informace
+
+### Data a soukromí
+
+Všechna data pacientů jsou uložena v lokální databázi IndexedDB ve vaší instanci prohlížeče/Electronu. Nic se nepřenáší po síti. Pokud potřebujete přenést data na jiný počítač, použijte funkci **Export** na přehledu pacientů.
+
+### Automatické odhlášení
+
+Z bezpečnostních důvodů vás aplikace automaticky odhlásí po **2 minutách** nečinnosti.
+
+### Statistické pozadí
+
+Referenční data jsou založena na longitudinální studii nedonošených dětí v České republice:
+
+| | |
+|---|---|
+| **Velikost vzorku** | 1 781 dětí (846 dívek, 935 chlapců) |
+| **Vyšetření** | 5 676 celkem |
+| **Věkový rozsah** | 37. až 109. týden gestačního stáří |
+| **Instituce** | Centrum komplexní péče, KDDL VFN Praha |
+| **Období** | 2001–2015 |
+| **Metoda** | Kvantilová regrese LMS |
+| **Percentily** | 2., 5., 50., 95., 98. |
+| **Měření** | Délka těla, hmotnost, obvod hlavy, hmotnost k délce |
+| **Hmotnostní kategorie** | Pod 1500 g / nad 1500 g při narození |
+`;
+
+  writeFileSync(path.join(root, 'docs', 'USER_GUIDE_CS.md'), md);
+  console.log('  Written: docs/USER_GUIDE_CS.md');
+}
+
+function generateCzechHTML(cs, en) {
+  const img = (shot) => shot ? `
+      <figure>
+        <img src="${shot.file}" alt="${shot.description}" loading="lazy" />
+        <figcaption>${shot.description}</figcaption>
+      </figure>` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auxologie — Uživatelská příručka</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; line-height: 1.75; font-size: 16px; }
+    .hero { background: linear-gradient(135deg, #2f4050 0%, #1c84c6 100%); color: white; padding: 5rem 2rem; text-align: center; }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; font-weight: 700; }
+    .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 550px; margin: 0 auto; }
+    .lang-switch { position: absolute; top: 1.5rem; right: 2rem; }
+    .lang-switch a { color: white; text-decoration: none; opacity: 0.8; font-size: 0.9rem; padding: 0.4rem 0.8rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; }
+    .lang-switch a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 2rem; }
+    h2 { color: #2f4050; margin: 3rem 0 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; font-size: 1.5rem; }
+    h3 { color: #1c84c6; margin: 2rem 0 0.75rem; font-size: 1.2rem; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.75rem; margin-bottom: 1.25rem; }
+    li { margin-bottom: 0.5rem; }
+    strong { color: #2f4050; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 3rem 0; }
+    figure { margin: 2rem 0; border: 1px solid #e2e5e9; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    figure img { width: 100%; display: block; }
+    figcaption { padding: 0.6rem 1rem; background: #f8fafc; font-size: 0.85rem; color: #6b7280; text-align: center; border-top: 1px solid #e2e5e9; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { font-weight: 600; color: #2f4050; background: #f8fafc; }
+    .tech table td:first-child { font-weight: 600; white-space: nowrap; width: 180px; color: #2f4050; }
+    footer { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.85rem; border-top: 1px solid #e5e7eb; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+  <div class="hero" style="position: relative;">
+    <div class="lang-switch"><a href="USER_GUIDE.html">English</a></div>
+    <h1>Auxologie</h1>
+    <p>Uživatelská příručka</p>
+  </div>
+
+  <div class="container">
+    <p>Auxologie je desktopová aplikace určená pro neonatology a pediatrické lékaře, kteří potřebují sledovat růst předčasně narozených dětí. Aplikace je postavena na českých referenčních auxologických datech — percentilových růstových grafech odvozených ze studie 1 781 nedonošených dětí (5 676 vyšetření) v Centru komplexní péče, KDDL VFN Praha, v období 2001–2015.</p>
+
+    <p>Všechna data jsou uložena lokálně ve vašem počítači. Aplikace neobsahuje žádnou cloudovou komponentu — funguje zcela offline. Běží na macOS i Windows.</p>
+
+    <p>Rozhraní je dostupné v <strong>češtině</strong> a <strong>angličtině</strong>. Mezi jazyky lze přepínat kdykoli a vaše preference se zapamatuje.</p>
+
+    <hr />
+
+    <h2>Začínáme</h2>
+
+    <h3>Vytvoření účtu</h3>
+
+    <p>Při prvním spuštění aplikace se zobrazí přihlašovací obrazovka. Protože aplikace ukládá data lokálně, váš účet existuje pouze na vašem počítači — není sdílen s nikým.</p>
+
+    <p>Klikněte na <strong>Vytvořit účet</strong> pro nastavení uživatelského jména a hesla. Po registraci budete přesměrováni zpět na přihlašovací obrazovku.</p>
+
+    ${img(en.loginCs)}
+
+    <p>Pro přepnutí jazyka rozhraní před přihlášením použijte přepínač <strong>EN/CZ</strong> v pravém horním rohu přihlašovací stránky. Uvnitř aplikace je stejný přepínač dostupný v dolní části postranního menu.</p>
+
+    <h3>Přehled pacientů</h3>
+
+    <p>Po přihlášení se zobrazí přehled pacientů. Toto je centrální obrazovka aplikace — odsud můžete vyhledávat existující pacienty, vytvářet nové, exportovat data nebo přejít k referenčním grafům a profilu přes postranní menu.</p>
+
+    <p>Vyhledávací pole přijímá příjmení pacientů a rodná čísla. Výsledky se zobrazí v tabulce s ID, jménem, pohlavím, rodným číslem, datem narození, gestačním stářím při narození a porodní hmotností.</p>
+
+    ${img(cs.dashboardPreview)}
+
+    <hr />
+
+    <h2>Práce s pacienty</h2>
+
+    <h3>Registrace nového pacienta</h3>
+
+    <p>Klikněte na <strong>Nový pacient</strong> pro otevření registračního formuláře. Čtyři pole jsou povinná:</p>
+
+    <ol>
+      <li><strong>Rodné číslo</strong> — české národní identifikační číslo. Aplikace automaticky vypočítá datum narození a ověří kontrolní součet.</li>
+      <li><strong>Pohlaví</strong> — Dívka nebo Chlapec.</li>
+      <li><strong>Porodní hmotnost</strong> — v gramech. Maximum je 2500 g.</li>
+      <li><strong>Gestační týden při narození</strong> — týden gestace (maximum 37).</li>
+    </ol>
+
+    <p>Volitelně můžete zadat jméno dítěte, plánovaný termín porodu, porodní délku, obvod hlavy při narození a poznámky. Formulář obsahuje také oddíly pro údaje o matce a otci.</p>
+
+    ${img(cs.newPatientForm)}
+
+    <h3>Detail pacienta</h3>
+
+    <p>Detail pacienta je hlavní pracovní prostor pro jednotlivé dítě. Levý sloupec zobrazuje souhrnnou kartu s informacemi o věku — datum narození, vypočtený a plánovaný termín porodu, gestační stáří při narození, aktuální gestační stáří, korigovaný věk a kalendářní věk.</p>
+
+    <p>Pod tabulkou věku jsou sparkline grafy ukazující trend délky, hmotnosti a obvodu hlavy. Akční tlačítka umožňují přidat nové vyšetření, upravit pacienta nebo smazat pacienta.</p>
+
+    <p>Pravý sloupec zobrazuje karty vyšetření — každá karta ukazuje datum, korigovaný věk, délku těla, hmotnost, obvod hlavy a poznámky.</p>
+
+    ${img(cs.patientGrowth)}
+
+    <hr />
+
+    <h2>Sledování růstu v čase</h2>
+
+    <p>Hlavním účelem aplikace Auxologie je sledovat, jak předčasně narozené dítě roste ve srovnání s referenčními daty.</p>
+
+    <h3>Záznam vyšetření</h3>
+
+    <p>Na stránce detailu pacienta klikněte na <strong>Nové vyšetření</strong>. Formulář požaduje datum a čas vyšetření, délku těla v centimetrech, hmotnost v gramech, obvod hlavy v centimetrech, volitelné poznámky a volitelnou fotografii dítěte.</p>
+
+    ${img(cs.examFilled)}
+
+    <h3>Růstové grafy</h3>
+
+    <p>Po zaznamenání alespoň jednoho vyšetření se zobrazí čtyři růstové grafy vykreslující měření dítěte proti referenčním percentilovým křivkám. Zobrazené percentilové linie jsou 2., 5., 50., 95. a 98. — vypočtené pomocí metody kvantilové regrese LMS.</p>
+
+    <p>Čtyři grafy jsou: délka těla vs. korigovaný věk, hmotnost vs. korigovaný věk, obvod hlavy vs. korigovaný věk a hmotnost k délce.</p>
+
+    <p>Referenční křivky jsou vybrány automaticky na základě pohlaví dítěte a zda jeho porodní hmotnost byla nad nebo pod 1500 g. Datové body dítěte jsou spojeny barevnou linií (modrá pro chlapce, červená pro dívky).</p>
+
+    ${img(cs.growthCharts)}
+
+    <h3>Tabulková data</h3>
+
+    <p>Pod grafy je souhrnná tabulka se všemi vyšetřeními. Pro každou návštěvu tabulka ukazuje datum, korigovaný věk a pro každé měření naměřenou hodnotu, <strong>percentil</strong> a <strong>SDS/Z-skóre</strong>.</p>
+
+    <p>Z-skóre 0 odpovídá 50. percentilu. Hodnoty pod −2 nebo nad +2 indikují měření mimo normální rozsah a mohou vyžadovat klinickou pozornost.</p>
+
+    ${img(cs.growthTable)}
+
+    <hr />
+
+    <h2>Referenční grafy</h2>
+
+    <p>Sekce <strong>Grafy</strong>, přístupná z postranního menu, zobrazuje referenční percentilové křivky bez překrytí daty pacienta.</p>
+
+    <p>Čtyři záložky umožňují přepínat mezi referenčními populacemi: chlapci pod 1500 g, dívky pod 1500 g, chlapci nad 1500 g a dívky nad 1500 g.</p>
+
+    ${img(cs.refCharts)}
+
+    <hr />
+
+    <h2>Profil lékaře</h2>
+
+    <p>Sekce <strong>Profil</strong> umožňuje zadat vaše profesní údaje: titul před jménem, jméno, příjmení, titul za jménem a pracoviště.</p>
+
+    ${img(cs.doctorProfile)}
+
+    <hr />
+
+    <h2>Další informace</h2>
+
+    <h3>Data a soukromí</h3>
+
+    <p>Všechna data pacientů jsou uložena v lokální databázi IndexedDB. Nic se nepřenáší po síti. Pro přenos dat na jiný počítač použijte funkci <strong>Export</strong>.</p>
+
+    <h3>Automatické odhlášení</h3>
+
+    <p>Z bezpečnostních důvodů vás aplikace automaticky odhlásí po <strong>2 minutách</strong> nečinnosti.</p>
+
+    <h3>Statistické pozadí</h3>
+
+    <div class="tech">
+      <table>
+        <tr><td>Velikost vzorku</td><td>1 781 dětí (846 dívek, 935 chlapců)</td></tr>
+        <tr><td>Vyšetření</td><td>5 676 celkem</td></tr>
+        <tr><td>Věkový rozsah</td><td>37. až 109. týden gestačního stáří</td></tr>
+        <tr><td>Instituce</td><td>Centrum komplexní péče, KDDL VFN Praha</td></tr>
+        <tr><td>Období</td><td>2001–2015</td></tr>
+        <tr><td>Metoda</td><td>Kvantilová regrese LMS</td></tr>
+        <tr><td>Percentily</td><td>2., 5., 50., 95., 98.</td></tr>
+        <tr><td>Měření</td><td>Délka těla, hmotnost, obvod hlavy, hmotnost k délce</td></tr>
+        <tr><td>Hmotnostní kategorie</td><td>Pod 1500 g / nad 1500 g při narození</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2016–2026 RNDr. Jiří Helmich &middot; Podpořeno grantem z Norska</p>
+  </footer>
+</body>
+</html>`;
+
+  writeFileSync(path.join(root, 'docs', 'USER_GUIDE_CS.html'), html);
+  console.log('  Written: docs/USER_GUIDE_CS.html');
+}
+
+function generateIndexHTML() {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auxology — Documentation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f5f7fa; }
+    .card { text-align: center; max-width: 420px; padding: 3rem 2rem; }
+    h1 { font-size: 2.5rem; color: #2f4050; margin-bottom: 0.5rem; }
+    p { color: #6b7280; margin-bottom: 2rem; line-height: 1.6; }
+    .links { display: flex; gap: 1rem; justify-content: center; }
+    a { display: inline-block; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: transform 0.15s, box-shadow 0.15s; }
+    a:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .en { background: #1c84c6; color: white; }
+    .cs { background: #2f4050; color: white; }
+    .sub { margin-top: 1.5rem; font-size: 0.85rem; color: #9ca3af; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Auxology</h1>
+    <p>Growth monitoring for prematurely born children<br>Sledování růstu předčasně narozených dětí</p>
+    <div class="links">
+      <a href="USER_GUIDE.html" class="en">English</a>
+      <a href="USER_GUIDE_CS.html" class="cs">Česky</a>
+    </div>
+    <p class="sub">&copy; 2016–2026 RNDr. Jiří Helmich</p>
+  </div>
+</body>
+</html>`;
+
+  writeFileSync(path.join(root, 'docs', 'index.html'), html);
+  console.log('  Written: docs/index.html');
+}
+
+main().catch((err) => {
+  console.error('Error:', err);
+  process.exit(1);
+});

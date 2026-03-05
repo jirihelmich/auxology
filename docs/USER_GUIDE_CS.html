@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auxologie — Uživatelská příručka</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; line-height: 1.75; font-size: 16px; }
+    .hero { background: linear-gradient(135deg, #2f4050 0%, #1c84c6 100%); color: white; padding: 5rem 2rem; text-align: center; }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; font-weight: 700; }
+    .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 550px; margin: 0 auto; }
+    .lang-switch { position: absolute; top: 1.5rem; right: 2rem; }
+    .lang-switch a { color: white; text-decoration: none; opacity: 0.8; font-size: 0.9rem; padding: 0.4rem 0.8rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; }
+    .lang-switch a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 2rem; }
+    h2 { color: #2f4050; margin: 3rem 0 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; font-size: 1.5rem; }
+    h3 { color: #1c84c6; margin: 2rem 0 0.75rem; font-size: 1.2rem; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.75rem; margin-bottom: 1.25rem; }
+    li { margin-bottom: 0.5rem; }
+    strong { color: #2f4050; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 3rem 0; }
+    figure { margin: 2rem 0; border: 1px solid #e2e5e9; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    figure img { width: 100%; display: block; }
+    figcaption { padding: 0.6rem 1rem; background: #f8fafc; font-size: 0.85rem; color: #6b7280; text-align: center; border-top: 1px solid #e2e5e9; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { font-weight: 600; color: #2f4050; background: #f8fafc; }
+    .tech table td:first-child { font-weight: 600; white-space: nowrap; width: 180px; color: #2f4050; }
+    footer { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.85rem; border-top: 1px solid #e5e7eb; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+  <div class="hero" style="position: relative;">
+    <div class="lang-switch"><a href="USER_GUIDE.html">English</a></div>
+    <h1>Auxologie</h1>
+    <p>Uživatelská příručka</p>
+  </div>
+
+  <div class="container">
+    <p>Auxologie je desktopová aplikace určená pro neonatology a pediatrické lékaře, kteří potřebují sledovat růst předčasně narozených dětí. Aplikace je postavena na českých referenčních auxologických datech — percentilových růstových grafech odvozených ze studie 1 781 nedonošených dětí (5 676 vyšetření) v Centru komplexní péče, KDDL VFN Praha, v období 2001–2015.</p>
+
+    <p>Všechna data jsou uložena lokálně ve vašem počítači. Aplikace neobsahuje žádnou cloudovou komponentu — funguje zcela offline. Běží na macOS i Windows.</p>
+
+    <p>Rozhraní je dostupné v <strong>češtině</strong> a <strong>angličtině</strong>. Mezi jazyky lze přepínat kdykoli a vaše preference se zapamatuje.</p>
+
+    <hr />
+
+    <h2>Začínáme</h2>
+
+    <h3>Vytvoření účtu</h3>
+
+    <p>Při prvním spuštění aplikace se zobrazí přihlašovací obrazovka. Protože aplikace ukládá data lokálně, váš účet existuje pouze na vašem počítači — není sdílen s nikým.</p>
+
+    <p>Klikněte na <strong>Vytvořit účet</strong> pro nastavení uživatelského jména a hesla. Po registraci budete přesměrováni zpět na přihlašovací obrazovku.</p>
+
+    
+      <figure>
+        <img src="screenshots/01-login-cs.png" alt="Login page in Czech" loading="lazy" />
+        <figcaption>Login page in Czech</figcaption>
+      </figure>
+
+    <p>Pro přepnutí jazyka rozhraní před přihlášením použijte přepínač <strong>EN/CZ</strong> v pravém horním rohu přihlašovací stránky. Uvnitř aplikace je stejný přepínač dostupný v dolní části postranního menu.</p>
+
+    <h3>Přehled pacientů</h3>
+
+    <p>Po přihlášení se zobrazí přehled pacientů. Toto je centrální obrazovka aplikace — odsud můžete vyhledávat existující pacienty, vytvářet nové, exportovat data nebo přejít k referenčním grafům a profilu přes postranní menu.</p>
+
+    <p>Vyhledávací pole přijímá příjmení pacientů a rodná čísla. Výsledky se zobrazí v tabulce s ID, jménem, pohlavím, rodným číslem, datem narození, gestačním stářím při narození a porodní hmotností.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-12-dashboard-preview.png" alt="Přehled pacientů s náhledem" loading="lazy" />
+        <figcaption>Přehled pacientů s náhledem</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Práce s pacienty</h2>
+
+    <h3>Registrace nového pacienta</h3>
+
+    <p>Klikněte na <strong>Nový pacient</strong> pro otevření registračního formuláře. Čtyři pole jsou povinná:</p>
+
+    <ol>
+      <li><strong>Rodné číslo</strong> — české národní identifikační číslo. Aplikace automaticky vypočítá datum narození a ověří kontrolní součet.</li>
+      <li><strong>Pohlaví</strong> — Dívka nebo Chlapec.</li>
+      <li><strong>Porodní hmotnost</strong> — v gramech. Maximum je 2500 g.</li>
+      <li><strong>Gestační týden při narození</strong> — týden gestace (maximum 37).</li>
+    </ol>
+
+    <p>Volitelně můžete zadat jméno dítěte, plánovaný termín porodu, porodní délku, obvod hlavy při narození a poznámky. Formulář obsahuje také oddíly pro údaje o matce a otci.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-05-new-patient.png" alt="Formulář nového pacienta" loading="lazy" />
+        <figcaption>Formulář nového pacienta</figcaption>
+      </figure>
+
+    <h3>Detail pacienta</h3>
+
+    <p>Detail pacienta je hlavní pracovní prostor pro jednotlivé dítě. Levý sloupec zobrazuje souhrnnou kartu s informacemi o věku — datum narození, vypočtený a plánovaný termín porodu, gestační stáří při narození, aktuální gestační stáří, korigovaný věk a kalendářní věk.</p>
+
+    <p>Pod tabulkou věku jsou sparkline grafy ukazující trend délky, hmotnosti a obvodu hlavy. Akční tlačítka umožňují přidat nové vyšetření, upravit pacienta nebo smazat pacienta.</p>
+
+    <p>Pravý sloupec zobrazuje karty vyšetření — každá karta ukazuje datum, korigovaný věk, délku těla, hmotnost, obvod hlavy a poznámky.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-09-patient-growth.png" alt="Přehled pacienta s historií vyšetření" loading="lazy" />
+        <figcaption>Přehled pacienta s historií vyšetření</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Sledování růstu v čase</h2>
+
+    <p>Hlavním účelem aplikace Auxologie je sledovat, jak předčasně narozené dítě roste ve srovnání s referenčními daty.</p>
+
+    <h3>Záznam vyšetření</h3>
+
+    <p>Na stránce detailu pacienta klikněte na <strong>Nové vyšetření</strong>. Formulář požaduje datum a čas vyšetření, délku těla v centimetrech, hmotnost v gramech, obvod hlavy v centimetrech, volitelné poznámky a volitelnou fotografii dítěte.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-08-examination-filled.png" alt="Formulář vyšetření s naměřenými hodnotami" loading="lazy" />
+        <figcaption>Formulář vyšetření s naměřenými hodnotami</figcaption>
+      </figure>
+
+    <h3>Růstové grafy</h3>
+
+    <p>Po zaznamenání alespoň jednoho vyšetření se zobrazí čtyři růstové grafy vykreslující měření dítěte proti referenčním percentilovým křivkám. Zobrazené percentilové linie jsou 2., 5., 50., 95. a 98. — vypočtené pomocí metody kvantilové regrese LMS.</p>
+
+    <p>Čtyři grafy jsou: délka těla vs. korigovaný věk, hmotnost vs. korigovaný věk, obvod hlavy vs. korigovaný věk a hmotnost k délce.</p>
+
+    <p>Referenční křivky jsou vybrány automaticky na základě pohlaví dítěte a zda jeho porodní hmotnost byla nad nebo pod 1500 g. Datové body dítěte jsou spojeny barevnou linií (modrá pro chlapce, červená pro dívky).</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-10-growth-charts.png" alt="Růstové grafy s percentilovými křivkami" loading="lazy" />
+        <figcaption>Růstové grafy s percentilovými křivkami</figcaption>
+      </figure>
+
+    <h3>Tabulková data</h3>
+
+    <p>Pod grafy je souhrnná tabulka se všemi vyšetřeními. Pro každou návštěvu tabulka ukazuje datum, korigovaný věk a pro každé měření naměřenou hodnotu, <strong>percentil</strong> a <strong>SDS/Z-skóre</strong>.</p>
+
+    <p>Z-skóre 0 odpovídá 50. percentilu. Hodnoty pod −2 nebo nad +2 indikují měření mimo normální rozsah a mohou vyžadovat klinickou pozornost.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-11-growth-table.png" alt="Tabulková data s percentily a Z-skóre" loading="lazy" />
+        <figcaption>Tabulková data s percentily a Z-skóre</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Referenční grafy</h2>
+
+    <p>Sekce <strong>Grafy</strong>, přístupná z postranního menu, zobrazuje referenční percentilové křivky bez překrytí daty pacienta.</p>
+
+    <p>Čtyři záložky umožňují přepínat mezi referenčními populacemi: chlapci pod 1500 g, dívky pod 1500 g, chlapci nad 1500 g a dívky nad 1500 g.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-14-ref-charts.png" alt="Referenční růstové grafy" loading="lazy" />
+        <figcaption>Referenční růstové grafy</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Profil lékaře</h2>
+
+    <p>Sekce <strong>Profil</strong> umožňuje zadat vaše profesní údaje: titul před jménem, jméno, příjmení, titul za jménem a pracoviště.</p>
+
+    
+      <figure>
+        <img src="screenshots/cs-15-doctor-profile.png" alt="Profil lékaře" loading="lazy" />
+        <figcaption>Profil lékaře</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Další informace</h2>
+
+    <h3>Data a soukromí</h3>
+
+    <p>Všechna data pacientů jsou uložena v lokální databázi IndexedDB. Nic se nepřenáší po síti. Pro přenos dat na jiný počítač použijte funkci <strong>Export</strong>.</p>
+
+    <h3>Automatické odhlášení</h3>
+
+    <p>Z bezpečnostních důvodů vás aplikace automaticky odhlásí po <strong>2 minutách</strong> nečinnosti.</p>
+
+    <h3>Statistické pozadí</h3>
+
+    <div class="tech">
+      <table>
+        <tr><td>Velikost vzorku</td><td>1 781 dětí (846 dívek, 935 chlapců)</td></tr>
+        <tr><td>Vyšetření</td><td>5 676 celkem</td></tr>
+        <tr><td>Věkový rozsah</td><td>37. až 109. týden gestačního stáří</td></tr>
+        <tr><td>Instituce</td><td>Centrum komplexní péče, KDDL VFN Praha</td></tr>
+        <tr><td>Období</td><td>2001–2015</td></tr>
+        <tr><td>Metoda</td><td>Kvantilová regrese LMS</td></tr>
+        <tr><td>Percentily</td><td>2., 5., 50., 95., 98.</td></tr>
+        <tr><td>Měření</td><td>Délka těla, hmotnost, obvod hlavy, hmotnost k délce</td></tr>
+        <tr><td>Hmotnostní kategorie</td><td>Pod 1500 g / nad 1500 g při narození</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2016–2026 RNDr. Jiří Helmich &middot; Podpořeno grantem z Norska</p>
+  </footer>
+</body>
+</html>

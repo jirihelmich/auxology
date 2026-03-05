@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auxology — User Guide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; line-height: 1.75; font-size: 16px; }
+    .hero { background: linear-gradient(135deg, #2f4050 0%, #1c84c6 100%); color: white; padding: 5rem 2rem; text-align: center; }
+    .hero h1 { font-size: 2.8rem; margin-bottom: 0.75rem; font-weight: 700; }
+    .hero p { font-size: 1.15rem; opacity: 0.9; max-width: 550px; margin: 0 auto; }
+    .lang-switch { position: absolute; top: 1.5rem; right: 2rem; }
+    .lang-switch a { color: white; text-decoration: none; opacity: 0.8; font-size: 0.9rem; padding: 0.4rem 0.8rem; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; }
+    .lang-switch a:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .container { max-width: 780px; margin: 0 auto; padding: 3rem 2rem; }
+    h2 { color: #2f4050; margin: 3rem 0 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; font-size: 1.5rem; }
+    h3 { color: #1c84c6; margin: 2rem 0 0.75rem; font-size: 1.2rem; }
+    p { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.75rem; margin-bottom: 1.25rem; }
+    li { margin-bottom: 0.5rem; }
+    strong { color: #2f4050; }
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 3rem 0; }
+    figure { margin: 2rem 0; border: 1px solid #e2e5e9; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    figure img { width: 100%; display: block; }
+    figcaption { padding: 0.6rem 1rem; background: #f8fafc; font-size: 0.85rem; color: #6b7280; text-align: center; border-top: 1px solid #e2e5e9; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { font-weight: 600; color: #2f4050; background: #f8fafc; }
+    .tech table td:first-child { font-weight: 600; white-space: nowrap; width: 180px; color: #2f4050; }
+    footer { text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.85rem; border-top: 1px solid #e5e7eb; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+  <div class="hero" style="position: relative;">
+    <div class="lang-switch"><a href="USER_GUIDE_CS.html">Česky</a></div>
+    <h1>Auxology</h1>
+    <p>User Guide</p>
+  </div>
+
+  <div class="container">
+    <p>Auxology is a desktop application designed for neonatologists and paediatric clinicians who need to monitor the growth of prematurely born children. The application is built around Czech reference auxological data — percentile growth charts derived from a study of 1,781 premature children (5,676 examinations) at the Centre of Comprehensive Care, KDDL VFN Prague, between 2001 and 2015.</p>
+
+    <p>All data is stored locally on your computer. There is no cloud component — the application works entirely offline. It runs on both macOS and Windows.</p>
+
+    <p>The interface is available in <strong>Czech</strong> and <strong>English</strong>. You can switch between the two at any time, and your preference is remembered across sessions.</p>
+
+    <hr />
+
+    <h2>Getting Started</h2>
+
+    <h3>Creating an Account</h3>
+
+    <p>When you launch Auxology for the first time, you are presented with the login screen. Since the application stores data locally, your account exists only on your machine — it is not shared with anyone.</p>
+
+    <p>Click <strong>Create account</strong> to set up a username and password. Once registered, you are redirected back to the login screen where you can sign in with your new credentials.</p>
+
+    
+      <figure>
+        <img src="screenshots/01-login-cs.png" alt="Login page in Czech" loading="lazy" />
+        <figcaption>Login page in Czech</figcaption>
+      </figure>
+
+    <p>To switch the interface language before logging in, use the <strong>EN/CZ</strong> toggle in the top-right corner of the login page. Inside the application, the same toggle is available at the bottom of the sidebar navigation.</p>
+
+    
+      <figure>
+        <img src="screenshots/02-login-en.png" alt="Login page in English" loading="lazy" />
+        <figcaption>Login page in English</figcaption>
+      </figure>
+
+    <h3>The Dashboard</h3>
+
+    <p>After signing in, you land on the patient dashboard. This is the central screen of the application — from here you can search for existing patients, create new ones, export your data, or navigate to reference charts and your profile via the sidebar.</p>
+
+    <p>The search bar accepts patient surnames and birth numbers. Results appear in a table that shows each patient's ID, name, gender, birth number, date of birth, gestational age at birth, and birth weight. Clicking a patient's name takes you to their detail page. Clicking the info icon on the right opens a preview panel with a timeline of examinations and quick-action links.</p>
+
+    
+      <figure>
+        <img src="screenshots/12-dashboard-preview.png" alt="Dashboard with patient preview" loading="lazy" />
+        <figcaption>Dashboard with patient preview</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Working with Patients</h2>
+
+    <h3>Registering a New Patient</h3>
+
+    <p>Click <strong>New patient</strong> on the dashboard to open the registration form. Four fields are required:</p>
+
+    <ol>
+      <li><strong>Birth number</strong> (rodné číslo) — the Czech national identification number. The application automatically computes the date of birth and validates the checksum. For female patients, the month is encoded with +50 as per the Czech standard.</li>
+      <li><strong>Gender</strong> — Girl or Boy.</li>
+      <li><strong>Birth weight</strong> — in grams. The maximum is 2500 g (the threshold for prematurity).</li>
+      <li><strong>Gestational week at birth</strong> — the week of gestation when the child was born (maximum 37).</li>
+    </ol>
+
+    <p>You can optionally provide the child's name, planned due date, birth length, head circumference at birth, and free-text notes. The form also includes sections for mother and father details — personal data, anthropometric measurements, contact information, and address.</p>
+
+    
+      <figure>
+        <img src="screenshots/06-new-patient-filled.png" alt="Filled patient form" loading="lazy" />
+        <figcaption>Filled patient form</figcaption>
+      </figure>
+
+    <h3>The Patient Detail Page</h3>
+
+    <p>The patient detail page is the main workspace for a single child. The left column shows a summary card with age information — date of birth (derived from the birth number), calculated and planned due dates, gestational age at birth, current gestational age, corrected age, and calendar age. Corrected age is automatically calculated by subtracting (40 − birth week) weeks from the actual age.</p>
+
+    <p>Below the age table, sparkline charts show the trend of length, weight, and head circumference across all recorded examinations. Action buttons let you add a new examination, edit the patient, or delete the patient and all associated data.</p>
+
+    <p>The right column shows the examination cards — each card displays the date, corrected age at the time of the examination, body length, weight, head circumference, and any notes. Cards can be edited or deleted individually.</p>
+
+    
+      <figure>
+        <img src="screenshots/09-patient-growth.png" alt="Patient overview with examination history" loading="lazy" />
+        <figcaption>Patient overview with examination history</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Tracking Growth Over Time</h2>
+
+    <p>The core purpose of Auxology is to track how a premature child grows relative to reference data. This is done by recording examinations at each clinical visit and reviewing the resulting charts and statistics.</p>
+
+    <h3>Recording an Examination</h3>
+
+    <p>From the patient detail page, click <strong>New examination</strong>. The form asks for the examination date and time (pre-filled with the current moment), body length in centimetres, body weight in grams, head circumference in centimetres, optional notes, and an optional photo of the child.</p>
+
+    <p>If a previous examination exists, its values are displayed above the input fields for quick reference. If this is the first examination, birth measurements are shown instead.</p>
+
+    
+      <figure>
+        <img src="screenshots/08-examination-filled.png" alt="Examination form with measurements" loading="lazy" />
+        <figcaption>Examination form with measurements</figcaption>
+      </figure>
+
+    <h3>Growth Charts</h3>
+
+    <p>Once at least one examination is recorded, the patient detail page shows four growth charts that plot the child's measurements against reference percentile curves. The percentile lines shown are the 2nd, 5th, 50th, 95th, and 98th — computed using the LMS quantile regression method.</p>
+
+    <p>The four charts are: body length vs. corrected age, body weight vs. corrected age, head circumference vs. corrected age, and weight for length (weight plotted against body length rather than age).</p>
+
+    <p>The reference curves are selected automatically based on the child's gender and whether their birth weight was above or below 1500 g. The child's own data points are connected by a coloured line (blue for boys, red for girls), making it easy to see at a glance whether growth is following, crossing, or deviating from the expected percentile bands. Clicking any chart opens it in a full-screen view for closer inspection.</p>
+
+    
+      <figure>
+        <img src="screenshots/10-growth-charts.png" alt="Growth charts with percentile curves" loading="lazy" />
+        <figcaption>Growth charts with percentile curves</figcaption>
+      </figure>
+
+    <h3>Tabulated Data</h3>
+
+    <p>Below the charts, a summary table lists every examination chronologically. For each visit, the table shows the date, corrected age, and for each of the three measurements (weight, length, head circumference) both the raw value and the computed <strong>percentile</strong> and <strong>SDS/Z-score</strong>. A separate column shows the weight-for-length percentile and Z-score.</p>
+
+    <p>A Z-score of 0 corresponds to the 50th percentile. Values below −2 or above +2 indicate measurements outside the normal range and may warrant clinical attention. This tabulated view gives clinicians a concise numerical summary to complement the visual growth charts.</p>
+
+    
+      <figure>
+        <img src="screenshots/11-growth-table.png" alt="Tabulated data with percentiles and Z-scores" loading="lazy" />
+        <figcaption>Tabulated data with percentiles and Z-scores</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Reference Charts</h2>
+
+    <p>The <strong>Charts</strong> section, accessible from the sidebar, displays the reference percentile curves without any patient data overlaid. This is useful for printing blank charts, for educational purposes, or for comparing against measurements taken outside the application.</p>
+
+    <p>Four tabs let you switch between the reference populations: boys below 1500 g, girls below 1500 g, boys above 1500 g, and girls above 1500 g. Each tab shows full-size charts for body length, body weight, weight-for-length, and head circumference.</p>
+
+    
+      <figure>
+        <img src="screenshots/14-ref-charts.png" alt="Reference growth charts" loading="lazy" />
+        <figcaption>Reference growth charts</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Doctor Profile</h2>
+
+    <p>The <strong>Profile</strong> section lets you enter your professional details: title prefix (e.g. RNDr., MUDr.), first name, surname, title suffix (e.g. Ph.D.), and workplace. This information is displayed in the sidebar so you can confirm which account is active.</p>
+
+    
+      <figure>
+        <img src="screenshots/15-doctor-profile.png" alt="Doctor profile" loading="lazy" />
+        <figcaption>Doctor profile</figcaption>
+      </figure>
+
+    <hr />
+
+    <h2>Additional Information</h2>
+
+    <h3>Data and Privacy</h3>
+
+    <p>All patient data is stored in a local IndexedDB database within your browser/Electron instance. Nothing is transmitted over the network. If you need to transfer data to another machine, use the <strong>Export</strong> function on the dashboard.</p>
+
+    <h3>Auto-Logout</h3>
+
+    <p>For security, the application automatically logs you out after <strong>2 minutes</strong> of inactivity. You will be returned to the login screen and need to sign in again to continue.</p>
+
+    <h3>Statistical Background</h3>
+
+    <div class="tech">
+      <table>
+        <tr><td>Sample size</td><td>1,781 children (846 girls, 935 boys)</td></tr>
+        <tr><td>Examinations</td><td>5,676 total</td></tr>
+        <tr><td>Age range</td><td>37th to 109th week of gestational age</td></tr>
+        <tr><td>Institution</td><td>Centre of Comprehensive Care, KDDL VFN Prague</td></tr>
+        <tr><td>Period</td><td>2001–2015</td></tr>
+        <tr><td>Method</td><td>LMS quantile regression</td></tr>
+        <tr><td>Percentiles</td><td>2nd, 5th, 50th, 95th, 98th</td></tr>
+        <tr><td>Measures</td><td>Body length, body weight, head circumference, weight-for-length</td></tr>
+        <tr><td>Weight categories</td><td>Below 1500 g / above 1500 g at birth</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2016–2026 RNDr. Jiří Helmich &middot; Supported by a grant from Norway</p>
+  </footer>
+</body>
+</html>
