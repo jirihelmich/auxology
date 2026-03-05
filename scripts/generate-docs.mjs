@@ -1,10 +1,16 @@
 import { _electron as electron } from 'playwright';
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
+const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
+const VERSION = pkg.version;
+const REPO = 'jirihelmich/auxology';
+const RELEASE_URL = `https://github.com/${REPO}/releases/latest`;
+const DMG_URL = `https://github.com/${REPO}/releases/download/v${VERSION}/Auxology-${VERSION}-arm64.dmg`;
+const EXE_URL = `https://github.com/${REPO}/releases/download/v${VERSION}/Auxology-Setup-${VERSION}.exe`;
 const screenshotDir = path.join(root, 'docs', 'screenshots');
 
 const TEST_USER = 'docs-test-user-' + Date.now();
@@ -305,6 +311,8 @@ All data is stored locally on your computer. There is no cloud component — the
 
 The interface is available in **Czech** and **English**. You can switch between the two at any time, and your preference is remembered across sessions.
 
+**Download:** [macOS (DMG)](${DMG_URL}) · [Windows (EXE)](${EXE_URL}) · [All releases](${RELEASE_URL})
+
 ---
 
 ## Getting Started
@@ -453,8 +461,8 @@ The reference data is based on a longitudinal study of premature children in the
 | **Weight categories** | Below 1500 g / above 1500 g at birth |
 `;
 
-  writeFileSync(path.join(root, 'docs', 'USER_GUIDE.md'), md);
-  console.log('  Written: docs/USER_GUIDE.md');
+  writeFileSync(path.join(root, 'docs', 'user-guide.md'), md);
+  console.log('  Written: docs/user-guide.md');
 }
 
 function generateHTML(s) {
@@ -499,7 +507,7 @@ function generateHTML(s) {
 </head>
 <body>
   <div class="hero" style="position: relative;">
-    <div class="lang-switch"><a href="USER_GUIDE_CS.html">Česky</a></div>
+    <div class="lang-switch"><a href="user-guide-cs.html">Česky</a></div>
     <h1>Auxology</h1>
     <p>User Guide</p>
   </div>
@@ -510,6 +518,8 @@ function generateHTML(s) {
     <p>All data is stored locally on your computer. There is no cloud component — the application works entirely offline. It runs on both macOS and Windows.</p>
 
     <p>The interface is available in <strong>Czech</strong> and <strong>English</strong>. You can switch between the two at any time, and your preference is remembered across sessions.</p>
+
+    <p class="download-links"><strong>Download:</strong> <a href="${DMG_URL}">macOS (DMG)</a> · <a href="${EXE_URL}">Windows (EXE)</a> · <a href="${RELEASE_URL}">All releases</a></p>
 
     <hr />
 
@@ -649,8 +659,8 @@ function generateHTML(s) {
 </body>
 </html>`;
 
-  writeFileSync(path.join(root, 'docs', 'USER_GUIDE.html'), html);
-  console.log('  Written: docs/USER_GUIDE.html');
+  writeFileSync(path.join(root, 'docs', 'user-guide.html'), html);
+  console.log('  Written: docs/user-guide.html');
 }
 
 function generateCzechMarkdown(cs, en) {
@@ -663,6 +673,8 @@ Auxologie je desktopová aplikace určená pro neonatology a pediatrické léka�
 Všechna data jsou uložena lokálně ve vašem počítači. Aplikace neobsahuje žádnou cloudovou komponentu — funguje zcela offline. Běží na macOS i Windows.
 
 Rozhraní je dostupné v **češtině** a **angličtině**. Mezi jazyky lze přepínat kdykoli a vaše preference se zapamatuje.
+
+**Stáhnout:** [macOS (DMG)](${DMG_URL}) · [Windows (EXE)](${EXE_URL}) · [Všechny verze](${RELEASE_URL})
 
 ---
 
@@ -784,8 +796,8 @@ Referenční data jsou založena na longitudinální studii nedonošených dět�
 | **Hmotnostní kategorie** | Pod 1500 g / nad 1500 g při narození |
 `;
 
-  writeFileSync(path.join(root, 'docs', 'USER_GUIDE_CS.md'), md);
-  console.log('  Written: docs/USER_GUIDE_CS.md');
+  writeFileSync(path.join(root, 'docs', 'user-guide-cs.md'), md);
+  console.log('  Written: docs/user-guide-cs.md');
 }
 
 function generateCzechHTML(cs, en) {
@@ -830,7 +842,7 @@ function generateCzechHTML(cs, en) {
 </head>
 <body>
   <div class="hero" style="position: relative;">
-    <div class="lang-switch"><a href="USER_GUIDE.html">English</a></div>
+    <div class="lang-switch"><a href="user-guide.html">English</a></div>
     <h1>Auxologie</h1>
     <p>Uživatelská příručka</p>
   </div>
@@ -841,6 +853,8 @@ function generateCzechHTML(cs, en) {
     <p>Všechna data jsou uložena lokálně ve vašem počítači. Aplikace neobsahuje žádnou cloudovou komponentu — funguje zcela offline. Běží na macOS i Windows.</p>
 
     <p>Rozhraní je dostupné v <strong>češtině</strong> a <strong>angličtině</strong>. Mezi jazyky lze přepínat kdykoli a vaše preference se zapamatuje.</p>
+
+    <p class="download-links"><strong>Stáhnout:</strong> <a href="${DMG_URL}">macOS (DMG)</a> · <a href="${EXE_URL}">Windows (EXE)</a> · <a href="${RELEASE_URL}">Všechny verze</a></p>
 
     <hr />
 
@@ -976,8 +990,8 @@ function generateCzechHTML(cs, en) {
 </body>
 </html>`;
 
-  writeFileSync(path.join(root, 'docs', 'USER_GUIDE_CS.html'), html);
-  console.log('  Written: docs/USER_GUIDE_CS.html');
+  writeFileSync(path.join(root, 'docs', 'user-guide-cs.html'), html);
+  console.log('  Written: docs/user-guide-cs.html');
 }
 
 function generateIndexHTML() {
@@ -1006,8 +1020,8 @@ function generateIndexHTML() {
     <h1>Auxology</h1>
     <p>Growth monitoring for prematurely born children<br>Sledování růstu předčasně narozených dětí</p>
     <div class="links">
-      <a href="USER_GUIDE.html" class="en">English</a>
-      <a href="USER_GUIDE_CS.html" class="cs">Česky</a>
+      <a href="user-guide.html" class="en">English</a>
+      <a href="user-guide-cs.html" class="cs">Česky</a>
     </div>
     <p class="sub">&copy; 2016–2026 RNDr. Jiří Helmich</p>
   </div>
